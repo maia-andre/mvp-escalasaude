@@ -405,67 +405,64 @@ O uso de SVG interativo combinado com React transforma o sistema em algo próxim
 
 Arquitetura 
 
+```mermaid
 classDiagram
 
 class Unidade {
-  +UUID id
-  +string nome
-  +string endereco
-  +string svgPath
+  id
+  nome
+  endereco
+  svgPath
 }
 
 class Sala {
-  +UUID id
-  +string nome
-  +string tipo
-  +string svgId
-  +int capacidade
+  id
+  nome
+  tipo
+  svgId
+  capacidade
 }
 
 class Funcionario {
-  +UUID id
-  +string nome
-  +string cargo
-  +string vinculo
-  +boolean ativo
+  id
+  nome
+  cargo
+  vinculo
+  ativo
 }
 
 class Escala {
-  +UUID id
-  +date data
-  +string turno
-  +time inicio
-  +time fim
+  id
+  data
+  turno
+  inicio
+  fim
 }
 
 class RestricaoOperacional {
-  +UUID id
-  +string regra
-  +string descricao
+  id
+  regra
+  descricao
 }
 
 class HistoricoEscala {
-  +UUID id
-  +string acao
-  +datetime criadoEm
-  +string valorAnterior
-  +string valorNovo
+  id
+  acao
+  criadoEm
 }
 
 class Usuario {
-  +UUID id
-  +string nome
-  +string email
-  +string perfil
+  id
+  nome
+  email
+  perfil
 }
 
 Unidade "1" --> "*" Sala
 Unidade "1" --> "*" Funcionario
-
 Sala "1" --> "*" Escala
 Funcionario "1" --> "*" Escala
-
 Funcionario "1" --> "*" RestricaoOperacional
-
 Escala "1" --> "*" HistoricoEscala
 Usuario "1" --> "*" HistoricoEscala
+```
