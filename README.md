@@ -402,3 +402,70 @@ O diferencial será:
 - clareza de distribuição da equipe.
 
 O uso de SVG interativo combinado com React transforma o sistema em algo próximo de um painel operacional em tempo real, muito diferente de planilhas tradicionais.
+
+Arquitetura 
+
+classDiagram
+
+class Unidade {
+  +UUID id
+  +string nome
+  +string endereco
+  +string svgPath
+}
+
+class Sala {
+  +UUID id
+  +string nome
+  +string tipo
+  +string svgId
+  +int capacidade
+}
+
+class Funcionario {
+  +UUID id
+  +string nome
+  +string cargo
+  +string vinculo
+  +boolean ativo
+}
+
+class Escala {
+  +UUID id
+  +date data
+  +string turno
+  +time inicio
+  +time fim
+}
+
+class RestricaoOperacional {
+  +UUID id
+  +string regra
+  +string descricao
+}
+
+class HistoricoEscala {
+  +UUID id
+  +string acao
+  +datetime criadoEm
+  +string valorAnterior
+  +string valorNovo
+}
+
+class Usuario {
+  +UUID id
+  +string nome
+  +string email
+  +string perfil
+}
+
+Unidade "1" --> "*" Sala
+Unidade "1" --> "*" Funcionario
+
+Sala "1" --> "*" Escala
+Funcionario "1" --> "*" Escala
+
+Funcionario "1" --> "*" RestricaoOperacional
+
+Escala "1" --> "*" HistoricoEscala
+Usuario "1" --> "*" HistoricoEscala
