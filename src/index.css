@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+@theme {
+  --color-sjc-blue-950: #060a13;
+  --color-sjc-blue-900: #0c1527;
+  --color-sjc-blue-800: #14223c;
+  --color-sjc-blue-700: #1e3256;
+  --color-sjc-blue-600: #2a4575;
+  --color-sjc-blue-500: #3b5e9a;
+  
+  --color-sjc-gold-500: #e5a93c;
+  --color-sjc-gold-400: #f0be5d;
+  --color-sjc-gold-300: #f7d287;
+  
+  --color-sjc-silver-100: #f1f5f9;
+  --color-sjc-silver-200: #e2e8f0;
+  --color-sjc-silver-300: #cbd5e1;
+
+  /* Cargo colors per user requested: "cores por função" */
+  --color-cargo-medico: #ef4444;       /* Vermelho */
+  --color-cargo-enfermeiro: #3b82f6;   /* Azul */
+  --color-cargo-farmaceutico: #a855f7; /* Roxo */
+  --color-cargo-recepcionista: #10b981;/* Verde */
+  --color-cargo-dentista: #06b6d4;     /* Ciano */
+  --color-cargo-tec-enfermagem: #0ea5e9;/* Sky Blue */
+  --color-cargo-administrativo: #eab308;/* Amarelo/Dourado */
+  --color-cargo-gerente: #ec4899;      /* Rosa */
+  
+  --font-sans: 'Inter', sans-serif;
+  --font-title: 'Outfit', sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-sjc-blue-950);
+    color: var(--color-sjc-silver-100);
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-title);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(12, 21, 39, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(229, 169, 60, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(229, 169, 60, 0.4);
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(20, 34, 60, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(229, 169, 60, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-panel-active {
+  border-color: rgba(229, 169, 60, 0.4);
+  box-shadow: 0 0 15px rgba(229, 169, 60, 0.15);
+}
+
+.glass-card {
+  background: rgba(30, 50, 86, 0.4);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-card:hover {
+  border-color: rgba(229, 169, 60, 0.2);
+  background: rgba(30, 50, 86, 0.6);
+}
+
+/* Interactive SVG Styles */
+.svg-room {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.svg-room:hover {
+  fill-opacity: 0.15;
+  stroke-width: 2.5;
+}
+
+.svg-room-active {
+  fill-opacity: 0.25;
+  stroke: var(--color-sjc-gold-500);
+  stroke-width: 3;
+  filter: drop-shadow(0 0 8px rgba(229, 169, 60, 0.4));
+}
+
+.svg-room-empty {
+  animation: pulse-border 2s infinite ease-in-out;
+}
+
+@keyframes pulse-border {
+  0%, 100% {
+    stroke-opacity: 0.4;
+  }
+  50% {
+    stroke-opacity: 0.9;
+    stroke-width: 2;
+  }
+}
+
+/* Shaking animation when room is at capacity */
+.shake-element {
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+/* Pulse animation for highlights */
+.glow-gold {
+  box-shadow: 0 0 15px rgba(229, 169, 60, 0.5);
+}
