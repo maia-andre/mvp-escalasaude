@@ -20,6 +20,9 @@ interface EscalaState {
   removerFuncionario: (funcionarioId: string, salaId: string) => void;
   limparEscalaDia: () => void;
   copiarDiaAnterior: () => void;
+
+  // Hidratação a partir do banco local (Electron). No-op no modo web.
+  hydrate: (partial: Partial<Pick<EscalaState, 'escalas' | 'historico'>>) => void;
 }
 
 export const useEscalaStore = create<EscalaState>((set, get) => ({
@@ -42,6 +45,8 @@ export const useEscalaStore = create<EscalaState>((set, get) => ({
   setTurnoSelecionado: (turno) => set({ turnoSelecionado: turno, salaSelecionada: null }),
   
   setSalaSelecionada: (salaId) => set({ salaSelecionada: salaId }),
+
+  hydrate: (partial) => set(partial),
 
   moverFuncionario: (funcionarioId, salaDeId, salaParaId) => {
     const { escalas, dataSelecionada, turnoSelecionado, historico } = get();
