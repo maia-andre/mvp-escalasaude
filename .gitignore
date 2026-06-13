@@ -1,7 +1,8 @@
 # Dependencies
 node_modules/
 
-# Electron build output
+# Build output
+dist/
 dist-electron/
 
 # TypeScript incremental build cache
