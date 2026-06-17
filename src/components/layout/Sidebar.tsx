@@ -1,54 +1,47 @@
 import React, { useState } from 'react';
 import { useEscalaStore } from '../../store/useEscalaStore';
-import { mockFuncionarios } from '../../data/funcionarios';
 import { FuncionarioCard } from '../ui/FuncionarioCard';
 import { useDroppable } from '@dnd-kit/core';
 import { CargoType } from '../../types';
-import { Search, Filter, HelpCircle, Trash2 } from 'lucide-react';
+import { ativoNoHorario } from '../../utils/horarioHelper';
+import { Search, HelpCircle, Trash2 } from 'lucide-react';
+
+const CARGOS: { value: CargoType | 'todos'; label: string }[] = [
+  { value: 'todos', label: 'Todos' },
+  { value: 'medico', label: 'Médico' },
+  { value: 'enfermeiro', label: 'Enfermeiro' },
+  { value: 'tec_enfermagem', label: 'Téc. Enfermagem' },
+  { value: 'farmaceutico', label: 'Farmácia' },
+  { value: 'dentista', label: 'Dentista' },
+  { value: 'recepcionista', label: 'Recepção' },
+  { value: 'administrativo', label: 'Adm' },
+  { value: 'gerente', label: 'Gerente' },
+];
 
 export const Sidebar: React.FC = () => {
-  const { dataSelecionada, turnoSelecionado, escalas } = useEscalaStore();
+  const { funcionarios, dataSelecionada, horarioReferencia, escalas } = useEscalaStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCargo, setSelectedCargo] = useState<CargoType | 'todos'>('todos');
 
-  // Make Sidebar a Droppable Zone so dragging cards back here desalocates them!
-  const { setNodeRef, isOver } = useDroppable({
-    id: 'sidebar-droppable'
-  });
+  // Soltar um card aqui desaloca o profissional.
+  const { setNodeRef, isOver } = useDroppable({ id: 'sidebar-droppable' });
 
-  // 1. Get all employees currently allocated in the selected day and turn
-  const allocatedIds = escalas
-    .filter(e => e.data === dataSelecionada && e.turno === turnoSelecionado)
-    .map(e => e.funcionarioId);
+  // Profissionais ativos e presentes no horário de referência.
+  const presentes = funcionarios.filter((f) => f.ativo && ativoNoHorario(f, horarioReferencia));
 
-  // 2. Filter employees matching the turn shift
-  const currentShiftStart = turnoSelecionado === 'manha' ? '07:00' : '13:00';
-  const shiftEmployees = mockFuncionarios.filter(
-    f => f.horario.inicio === currentShiftStart || f.cargo === 'gerente' // Gerente works all day
-  );
+  // Já alocados no dia (1 alocação por pessoa/dia).
+  const alocadosIds = escalas
+    .filter((e) => e.data === dataSelecionada)
+    .map((e) => e.funcionarioId);
 
-  // 3. Separate into unallocated and allocated list
-  const disponiveis = shiftEmployees.filter(f => !allocatedIds.includes(f.id));
+  const disponiveis = presentes.filter((f) => !alocadosIds.includes(f.id));
 
-  // 4. Apply search query & category filter
-  const filteredDisponiveis = disponiveis.filter(f => {
-    const matchesSearch = f.nome.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          f.matricula.includes(searchQuery);
+  const filtrados = disponiveis.filter((f) => {
+    const matchesSearch =
+      f.nome.toLowerCase().includes(searchQuery.toLowerCase()) || f.matricula.includes(searchQuery);
     const matchesCargo = selectedCargo === 'todos' || f.cargo === selectedCargo;
     return matchesSearch && matchesCargo;
   });
-
-  const allCargos: { value: CargoType | 'todos'; label: string }[] = [
-    { value: 'todos', label: 'Todos' },
-    { value: 'medico', label: 'Médico' },
-    { value: 'enfermeiro', label: 'Enfermeiro' },
-    { value: 'tec_enfermagem', label: 'Téc. Enfermagem' },
-    { value: 'farmaceutico', label: 'Farmácia' },
-    { value: 'dentista', label: 'Dentista' },
-    { value: 'recepcionista', label: 'Recepção' },
-    { value: 'administrativo', label: 'Adm' },
-    { value: 'gerente', label: 'Gerente' }
-  ];
 
   return (
     <aside
@@ -64,13 +57,12 @@ export const Sidebar: React.FC = () => {
             Profissionais Disponíveis
           </h2>
           <p className="text-[10px] text-slate-400 mt-0.5">
-            Turno da {turnoSelecionado === 'manha' ? 'Manhã' : 'Tarde'} • {disponiveis.length} livres
+            Presentes às {horarioReferencia} • {disponiveis.length} livres
           </p>
         </div>
-        
-        {/* Count Pill */}
+
         <span className="bg-[#0c1527] border border-[#e5a93c]/30 text-[#e5a93c] text-xs font-mono px-2 py-0.5 rounded-full font-bold shadow-inner">
-          {disponiveis.length} / {shiftEmployees.length}
+          {disponiveis.length} / {presentes.length}
         </span>
       </div>
 
@@ -89,8 +81,8 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Category Pills */}
-      <div className="px-4 pb-3 flex gap-1.5 overflow-x-auto shrink-0 border-b border-slate-800/50 pb-3 select-none">
-        {allCargos.map((cargo) => (
+      <div className="px-4 pb-3 flex gap-1.5 overflow-x-auto shrink-0 border-b border-slate-800/50 select-none">
+        {CARGOS.map((cargo) => (
           <button
             key={cargo.value}
             onClick={() => setSelectedCargo(cargo.value)}
@@ -115,18 +107,16 @@ export const Sidebar: React.FC = () => {
               O profissional será retirado da escala e retornará à lista de disponíveis.
             </p>
           </div>
-        ) : filteredDisponiveis.length > 0 ? (
-          filteredDisponiveis.map((func) => (
-            <FuncionarioCard key={func.id} funcionario={func} />
-          ))
+        ) : filtrados.length > 0 ? (
+          filtrados.map((func) => <FuncionarioCard key={func.id} funcionario={func} />)
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-center p-6 border border-dashed border-slate-800 rounded-xl">
             <HelpCircle size={24} className="text-slate-600" />
             <h3 className="text-xs font-bold text-slate-400 mt-2">Nenhum profissional</h3>
             <p className="text-[10px] text-slate-500 mt-1 max-w-[180px]">
-              {searchQuery || selectedCargo !== 'todos' 
-                ? 'Nenhum resultado corresponde aos filtros aplicados.' 
-                : 'Todos os profissionais deste turno já foram alocados nas salas!'}
+              {searchQuery || selectedCargo !== 'todos'
+                ? 'Nenhum resultado corresponde aos filtros aplicados.'
+                : `Todos os profissionais presentes às ${horarioReferencia} já foram alocados.`}
             </p>
           </div>
         )}

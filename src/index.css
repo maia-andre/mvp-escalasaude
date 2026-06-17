@@ -134,3 +134,30 @@
 .glow-gold {
   box-shadow: 0 0 15px rgba(229, 169, 60, 0.5);
 }
+
+/* Campos de formulário de cadastro */
+.input-cad {
+  width: 100%;
+  background: #0c1527;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.625rem;
+  font-size: 0.75rem;
+  color: #e2e8f0;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.input-cad:focus {
+  border-color: rgba(229, 169, 60, 0.5);
+}
+
+.input-cad::placeholder {
+  color: #64748b;
+}
+
+/* Opções dos selects nativos no tema escuro */
+.input-cad option {
+  background: #0c1527;
+  color: #e2e8f0;
+}
