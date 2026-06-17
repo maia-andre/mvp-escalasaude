@@ -3,7 +3,7 @@ import { Escala, HistoricoItem, Funcionario, Sala } from '../types';
 import { mockEscalas } from '../data/escalas';
 import { mockFuncionarios } from '../data/funcionarios';
 import { mockSalas } from '../data/salas';
-import { intervalosSobrepoem } from '../utils/horarioHelper';
+import { intervalosSobrepoem, horaParaMinutos, minutosParaHora } from '../utils/horarioHelper';
 
 interface EscalaState {
   // Cadastros (mutáveis via tela de gestão)
@@ -45,6 +45,10 @@ interface EscalaState {
   excluirFuncionario: (id: string) => void;
   salvarSala: (sala: Sala) => void;
   excluirSala: (id: string) => void;
+
+  // Turno partido (dividir/juntar carga horária)
+  dividirCargaFuncionario: (id: string) => { success: boolean; error?: string };
+  juntarCargaFuncionario: (id: string) => void;
 
   // Hidratação a partir do banco local (Electron). No-op no modo web.
   hydrate: (partial: Partial<Pick<EscalaState, 'escalas' | 'historico'>>) => void;
@@ -277,5 +281,92 @@ export const useEscalaStore = create<EscalaState>((set, get) => ({
         ...historico,
       ],
     });
+  },
+
+  dividirCargaFuncionario: (id) => {
+    const { funcionarios, historico } = get();
+    const f = funcionarios.find((x) => x.id === id);
+    if (!f) return { success: false, error: 'Profissional não encontrado.' };
+
+    const jaDividido = !!f.metade || funcionarios.some((x) => x.divididoDe === f.id);
+    if (jaDividido) {
+      return { success: false, error: 'A carga deste profissional já está dividida.' };
+    }
+
+    const ini = horaParaMinutos(f.horario.inicio);
+    const fim = horaParaMinutos(f.horario.fim);
+    if (fim - ini < 120) {
+      return { success: false, error: 'A carga horária é curta demais para dividir (mínimo de 2h).' };
+    }
+
+    // Ponto de corte: meio da jornada, arredondado para 30 minutos.
+    let corte = Math.round((ini + (fim - ini) / 2) / 30) * 30;
+    if (corte <= ini || corte >= fim) corte = ini + Math.floor((fim - ini) / 2);
+    const corteH = minutosParaHora(corte);
+
+    const manha: Funcionario = {
+      ...f,
+      horario: { inicio: f.horario.inicio, fim: corteH },
+      metade: 'manha',
+    };
+    const tarde: Funcionario = {
+      ...f,
+      id: `${f.id}-t-${Date.now()}`,
+      horario: { inicio: corteH, fim: f.horario.fim },
+      metade: 'tarde',
+      divididoDe: f.id,
+    };
+
+    set({
+      funcionarios: funcionarios.flatMap((x) => (x.id === f.id ? [manha, tarde] : [x])),
+      historico: [
+        novoHistorico(
+          'Carga Dividida',
+          `Dividiu a carga de ${f.nome}: manhã (${manha.horario.inicio}–${manha.horario.fim}) e tarde (${tarde.horario.inicio}–${tarde.horario.fim}).`,
+        ),
+        ...historico,
+      ],
+    });
+    return { success: true };
+  },
+
+  juntarCargaFuncionario: (id) => {
+    const { funcionarios, escalas, historico } = get();
+    const alvo = funcionarios.find((x) => x.id === id);
+    if (!alvo) return;
+
+    const original = alvo.divididoDe ? funcionarios.find((x) => x.id === alvo.divididoDe) : alvo;
+    const tarde = funcionarios.find((x) => x.divididoDe === (original ? original.id : ''));
+
+    if (original && tarde) {
+      const reunido: Funcionario = {
+        ...original,
+        horario: { inicio: original.horario.inicio, fim: tarde.horario.fim },
+        metade: undefined,
+        divididoDe: undefined,
+      };
+      set({
+        funcionarios: funcionarios
+          .filter((x) => x.id !== tarde.id)
+          .map((x) => (x.id === original.id ? reunido : x)),
+        escalas: escalas.filter((e) => e.funcionarioId !== tarde.id),
+        historico: [
+          novoHistorico(
+            'Carga Reunida',
+            `Reuniu a carga de ${reunido.nome} (${reunido.horario.inicio}–${reunido.horario.fim}).`,
+          ),
+          ...historico,
+        ],
+      });
+    } else {
+      // Par incompleto: apenas normaliza o registro restante.
+      const restante = original ?? alvo;
+      set({
+        funcionarios: funcionarios.map((x) =>
+          x.id === restante.id ? { ...x, metade: undefined, divididoDe: undefined } : x,
+        ),
+        historico: [novoHistorico('Carga Reunida', `Normalizou a carga de ${restante.nome}.`), ...historico],
+      });
+    }
   },
 }));

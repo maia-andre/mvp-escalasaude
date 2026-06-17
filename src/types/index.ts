@@ -27,6 +27,10 @@ export interface Funcionario {
     fim: string;
   };
   ativo: boolean;
+  /** Quando a carga foi dividida (turno partido), indica a metade desta instância. */
+  metade?: 'manha' | 'tarde';
+  /** Id do profissional original do qual esta instância é a metade da tarde. */
+  divididoDe?: string;
 }
 
 export type SalaTipo = 

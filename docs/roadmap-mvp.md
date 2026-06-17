@@ -40,11 +40,15 @@ Escopo acordado em 16/06/2026 (todas as frentes abaixo + extras já incluídos).
   propósito ("telas táticas"), evitando problemas de contraste no croqui.
 - ⚠️ Precisa de **validação visual** (foi implementado sem preview no ambiente).
 
-### Fase 6 — Dividir carga horária (turno partido)  🔜 planejado
-Botão **"Dividir carga horária"** na tela de Gerência (por profissional). Permite
-que um profissional fique disponível **duas vezes no mesmo dia**, em faixas que
-**não se sobrepõem** (ex.: Dra. Daniela de manhã no Acolhimento e à tarde no
-Consultório), para a gerente já programar isso.
+### Fase 6 — Dividir carga horária (turno partido)  ✅ (17/06/2026)
+Botão **"Dividir carga horária"** (tesoura) na lista de Profissionais. Permite que
+um profissional fique disponível **duas vezes no mesmo dia**, em faixas que **não
+se sobrepõem** (ex.: Dra. Daniela de manhã no Acolhimento e à tarde no Consultório).
+
+Implementado conforme a abordagem abaixo: a divisão corta a jornada ao meio e gera
+uma 2ª instância vinculada (badges **Manhã/Tarde**); o botão **Juntar** desfaz.
+Ações `dividirCargaFuncionario` / `juntarCargaFuncionario` no store; campos
+`metade` e `divididoDe` em `Funcionario`.
 
 Abordagem proposta (aproveita o modelo atual, sem grande refactor):
 - O botão divide a janela do profissional em duas (no ponto médio ou num horário
