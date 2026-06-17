@@ -76,3 +76,17 @@ export const getVinculoBadgeClass = (vinculo: VinculoType): string => {
   };
   return classes[vinculo];
 };
+
+// Listas para selects/multiselects de cadastro.
+export const CARGOS_DISPONIVEIS: CargoType[] = [
+  'medico',
+  'enfermeiro',
+  'tec_enfermagem',
+  'farmaceutico',
+  'dentista',
+  'recepcionista',
+  'administrativo',
+  'gerente',
+];
+
+export const VINCULOS_DISPONIVEIS: VinculoType[] = ['efetivo', 'urbam', 'terceirizada'];

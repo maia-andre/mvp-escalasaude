@@ -15,7 +15,13 @@ export interface Funcionario {
   nome: string;
   matricula: string;
   vinculo: VinculoType;
+  /** Função principal — define cor, ícone e rótulo padrão do profissional. */
   cargo: CargoType;
+  /** Funções que o profissional está habilitado a exercer (inclui o `cargo`). */
+  funcoes: CargoType[];
+  /** Ids de salas onde pode atuar. Vazio = sem restrição de setor. */
+  setoresPermitidos: string[];
+  /** Faixa horária livre do profissional no dia (HH:MM). */
   horario: {
     inicio: string;
     fim: string;
@@ -30,6 +36,13 @@ export type SalaTipo =
   | 'administrativo' 
   | 'recepcao';
 
+export interface PosicaoSala {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
 export interface Sala {
   id: string;
   nome: string;
@@ -37,12 +50,13 @@ export interface Sala {
   svgId: string;
   capacidade: number;
   cargosRecomendados?: CargoType[];
+  /** Posição na planta SVG (viewBox 1000×680). Sem isso, a sala não é desenhada. */
+  pos?: PosicaoSala;
 }
 
 export interface Escala {
   id: string;
   data: string;
-  turno: 'manha' | 'tarde';
   salaId: string;
   funcionarioId: string;
 }

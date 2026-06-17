@@ -1,8 +1,8 @@
 import React from 'react';
 import { useEscalaStore } from '../../store/useEscalaStore';
-import { mockSalas } from '../../data/salas';
-import { mockFuncionarios } from '../../data/funcionarios';
 import { getCargoLabel, getCargoIcon, getCargoColorClass, getVinculoLabel, getVinculoBadgeClass } from '../../utils/cargoHelper';
+import { ativoNoHorario } from '../../utils/horarioHelper';
+import { getAvisosAlocacao } from '../../utils/regrasHelper';
 import { 
   Building2, 
   Users, 
@@ -16,45 +16,31 @@ import {
 } from 'lucide-react';
 
 export const DetalheSala: React.FC = () => {
-  const { 
-    salaSelecionada, 
-    dataSelecionada, 
-    turnoSelecionado, 
-    escalas, 
+  const {
+    salas,
+    funcionarios,
+    salaSelecionada,
+    dataSelecionada,
+    horarioReferencia,
+    escalas,
     historico,
-    removerFuncionario, 
-    limparEscalaDia,
-    copiarDiaAnterior
+    removerFuncionario,
+    limparDia,
+    carregarBase,
   } = useEscalaStore();
 
-  const sala = mockSalas.find(s => s.id === salaSelecionada);
+  const sala = salas.find((s) => s.id === salaSelecionada);
 
-  // Get staff allocated to this room
-  const alocacoesNaSala = escalas.filter(
-    e => e.data === dataSelecionada && e.turno === turnoSelecionado && e.salaId === salaSelecionada
-  );
-  
-  const staffNaSala = alocacoesNaSala.map(
-    a => mockFuncionarios.find(f => f.id === a.funcionarioId)
-  ).filter(Boolean) as any[];
+  // Profissionais presentes nesta sala no horário de referência.
+  const staffNaSala = escalas
+    .filter((e) => e.data === dataSelecionada && e.salaId === salaSelecionada)
+    .map((a) => funcionarios.find((f) => f.id === a.funcionarioId))
+    .filter((f): f is NonNullable<typeof f> => !!f && ativoNoHorario(f, horarioReferencia));
 
-  // Validation: Check if allocated staff matches the recommended roles for this room
-  const getRuleWarnings = () => {
-    if (!sala || !sala.cargosRecomendados || sala.cargosRecomendados.length === 0) return [];
-    
-    const cargosRec = sala.cargosRecomendados;
-    const warnings: string[] = [];
-    staffNaSala.forEach(staff => {
-      if (!cargosRec.includes(staff.cargo)) {
-        warnings.push(
-          `Função de "${getCargoLabel(staff.cargo)}" não é a ideal para "${sala.nome}". Recomenda-se: ${cargosRec.map(c => getCargoLabel(c)).join(', ')}.`
-        );
-      }
-    });
-    return warnings;
-  };
-
-  const warnings = getRuleWarnings();
+  // Avisos de adequação (função + setor) dos profissionais alocados nesta sala.
+  const warnings = sala
+    ? staffNaSala.flatMap((staff) => getAvisosAlocacao(staff, sala).map((a) => a.mensagem))
+    : [];
 
   return (
     <section className="w-80 flex flex-col glass-panel border-l border-[rgba(229,169,60,0.15)] h-full shrink-0 select-none overflow-hidden">
@@ -190,21 +176,21 @@ export const DetalheSala: React.FC = () => {
               
               <div className="grid grid-cols-2 gap-2 mt-1">
                 <button
-                  onClick={copiarDiaAnterior}
+                  onClick={carregarBase}
                   className="flex flex-col items-center justify-center p-2 rounded bg-slate-800 hover:bg-[#e5a93c]/10 border border-slate-700/80 hover:border-[#e5a93c]/40 text-center gap-1 group transition-all"
-                  title="Importar escala-base pré-alocada para o dia selecionado"
+                  title="Importar a escala-base pré-alocada para o dia selecionado (se estiver vazio)"
                 >
                   <Calendar size={14} className="text-[#e5a93c] group-hover:scale-110 transition-transform" />
                   <span className="text-[9px] font-bold text-white">Carregar Base</span>
                 </button>
-                
+
                 <button
-                  onClick={limparEscalaDia}
+                  onClick={limparDia}
                   className="flex flex-col items-center justify-center p-2 rounded bg-slate-800 hover:bg-red-950/20 border border-slate-700/80 hover:border-red-900/40 text-center gap-1 group transition-all"
-                  title="Limpar todas as alocações deste turno"
+                  title="Limpar todas as alocações do dia selecionado"
                 >
                   <Trash2 size={14} className="text-red-400 group-hover:scale-110 transition-transform" />
-                  <span className="text-[9px] font-bold text-white">Limpar Turno</span>
+                  <span className="text-[9px] font-bold text-white">Limpar Dia</span>
                 </button>
               </div>
             </div>

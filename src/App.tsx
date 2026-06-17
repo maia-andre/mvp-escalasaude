@@ -11,18 +11,14 @@ import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
 import { MapaUnidade } from './components/mapa/MapaUnidade';
 import { DetalheSala } from './components/painel/DetalheSala';
-import { AlertCircle, X, ShieldAlert, Award } from 'lucide-react';
+import { GerenciarModal } from './components/cadastro/GerenciarModal';
+import { AlertCircle, X, Award } from 'lucide-react';
 
 export const App: React.FC = () => {
-  const { 
-    escalas, 
-    dataSelecionada, 
-    turnoSelecionado, 
-    moverFuncionario, 
-    removerFuncionario 
-  } = useEscalaStore();
+  const { moverFuncionario, removerFuncionario } = useEscalaStore();
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [gerenciarAberto, setGerenciarAberto] = useState(false);
 
   // Set up sensors to allow clicking buttons and inputs within draggable elements
   const sensors = useSensors(
@@ -76,7 +72,7 @@ export const App: React.FC = () => {
       <div className="h-screen w-screen flex flex-col overflow-hidden bg-[#070b13] select-none font-sans text-slate-100 relative">
         
         {/* Top Header Row */}
-        <Header />
+        <Header onGerenciar={() => setGerenciarAberto(true)} />
 
         {/* 3-Column Work Area */}
         <div className="flex-1 flex min-h-0 overflow-hidden relative">
@@ -130,6 +126,9 @@ export const App: React.FC = () => {
             </button>
           </div>
         )}
+
+        {/* Gestão de cadastros (profissionais e setores) */}
+        <GerenciarModal open={gerenciarAberto} onClose={() => setGerenciarAberto(false)} />
       </div>
     </DndContext>
   );
