@@ -12,10 +12,15 @@ import {
   Calendar,
   Layers,
   ArrowRight,
-  ClipboardList
+  ClipboardList,
+  CopyPlus
 } from 'lucide-react';
 
-export const DetalheSala: React.FC = () => {
+interface DetalheSalaProps {
+  onReplicar: () => void;
+}
+
+export const DetalheSala: React.FC<DetalheSalaProps> = ({ onReplicar }) => {
   const {
     salas,
     funcionarios,
@@ -193,6 +198,14 @@ export const DetalheSala: React.FC = () => {
                   <span className="text-[9px] font-bold text-white">Limpar Dia</span>
                 </button>
               </div>
+
+              <button
+                onClick={onReplicar}
+                className="flex items-center justify-center gap-2 mt-1 p-2 rounded bg-[var(--c-surface-2)] hover:bg-[#e5a93c]/10 border border-slate-700/80 hover:border-[#e5a93c]/40 text-[11px] font-bold text-slate-200 transition-all"
+                title="Replicar este dia para outros dias, ou salvar/aplicar modelos de escala"
+              >
+                <CopyPlus size={14} className="text-[#e5a93c]" /> Replicar / Modelos
+              </button>
             </div>
 
             {/* Audit History Logs */}

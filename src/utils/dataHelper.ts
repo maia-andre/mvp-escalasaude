@@ -49,6 +49,30 @@ export const rotuloDia = (iso: string): { sigla: string; dia: number; mes: strin
   return { sigla: DIAS[dow], dia: d.getDate(), mes: MESES[d.getMonth()], fimDeSemana: dow === 0 || dow === 6 };
 };
 
+export const ehFimDeSemana = (iso: string): boolean => {
+  const dow = parse(iso).getDay();
+  return dow === 0 || dow === 6;
+};
+
+/** Lista inclusiva de datas entre `ini` e `fim` (vazia se fim < ini). */
+export const intervaloDeDias = (ini: string, fim: string): string[] => {
+  const dias: string[] = [];
+  let atual = ini;
+  let guarda = 0;
+  while (atual <= fim && guarda < 400) {
+    dias.push(atual);
+    atual = somarDias(atual, 1);
+    guarda++;
+  }
+  return dias;
+};
+
+/** Rótulo curto de uma data, ex.: "Seg, 25 mai". */
+export const rotuloDataCurto = (iso: string): string => {
+  const r = rotuloDia(iso);
+  return `${r.sigla}, ${String(r.dia).padStart(2, '0')} ${r.mes}`;
+};
+
 /** Rótulo do intervalo da semana, ex.: "25 mai – 31 mai 2026". */
 export const rotuloSemana = (iso: string): string => {
   const dias = diasDaSemana(iso);

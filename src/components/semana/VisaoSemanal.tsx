@@ -1,9 +1,13 @@
 import React from 'react';
 import { useEscalaStore } from '../../store/useEscalaStore';
 import { diasDaSemana, somarDias, rotuloDia, rotuloSemana } from '../../utils/dataHelper';
-import { CalendarRange, ChevronLeft, ChevronRight, Map as MapIcon, ShieldAlert } from 'lucide-react';
+import { CalendarRange, ChevronLeft, ChevronRight, Map as MapIcon, ShieldAlert, CopyPlus } from 'lucide-react';
 
-export const VisaoSemanal: React.FC = () => {
+interface VisaoSemanalProps {
+  onReplicar: () => void;
+}
+
+export const VisaoSemanal: React.FC<VisaoSemanalProps> = ({ onReplicar }) => {
   const { salas, escalas, dataSelecionada, setDataSelecionada, setModoVisao } = useEscalaStore();
 
   const dias = diasDaSemana(dataSelecionada);
@@ -37,6 +41,13 @@ export const VisaoSemanal: React.FC = () => {
           <span className="text-xs text-slate-400">• {rotuloSemana(dataSelecionada)}</span>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={onReplicar}
+            className="flex items-center gap-1.5 text-xs font-bold text-[#e5a93c] border border-[#e5a93c]/40 hover:bg-[#e5a93c]/10 rounded-lg px-2.5 py-1.5 transition"
+            title="Replicar este dia para outros / modelos"
+          >
+            <CopyPlus size={14} /> Replicar
+          </button>
           <button
             onClick={() => setDataSelecionada(somarDias(dataSelecionada, -7))}
             className="flex items-center gap-1 text-xs text-slate-300 bg-[var(--c-surface)] border border-slate-700/60 rounded-lg px-2.5 py-1.5 hover:border-[#e5a93c]/40 transition"

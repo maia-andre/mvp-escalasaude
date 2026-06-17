@@ -72,3 +72,11 @@ export interface HistoricoItem {
   usuario: string;
   detalhes: string;
 }
+
+/** Escala-base nomeada: conjunto de alocações (sala × profissional) reaplicável. */
+export interface ModeloEscala {
+  id: string;
+  nome: string;
+  itens: { salaId: string; funcionarioId: string }[];
+  criadoEm: string;
+}

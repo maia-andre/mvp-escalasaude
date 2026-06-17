@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Escala, HistoricoItem, Funcionario, Sala } from '../types';
+import { Escala, HistoricoItem, Funcionario, Sala, ModeloEscala } from '../types';
 import { mockEscalas } from '../data/escalas';
 import { mockFuncionarios } from '../data/funcionarios';
 import { mockSalas } from '../data/salas';
@@ -9,6 +9,8 @@ interface EscalaState {
   // Cadastros (mutáveis via tela de gestão)
   funcionarios: Funcionario[];
   salas: Sala[];
+  /** Escalas-base nomeadas (modelos reaplicáveis). */
+  modelos: ModeloEscala[];
 
   // Operação
   dataSelecionada: string;
@@ -50,6 +52,12 @@ interface EscalaState {
   dividirCargaFuncionario: (id: string) => { success: boolean; error?: string };
   juntarCargaFuncionario: (id: string) => void;
 
+  // Modelos e replicação de escala
+  salvarModelo: (nome: string) => void;
+  aplicarModelo: (modeloId: string, modo: 'sobrescrever' | 'mesclar') => void;
+  excluirModelo: (id: string) => void;
+  replicarDia: (destinos: string[], modo: 'sobrescrever' | 'mesclar') => number;
+
   // Hidratação a partir do banco local (Electron). No-op no modo web.
   hydrate: (partial: Partial<Pick<EscalaState, 'escalas' | 'historico'>>) => void;
 }
@@ -72,9 +80,42 @@ const novoHistorico = (acao: string, detalhes: string): HistoricoItem => ({
   detalhes,
 });
 
+/**
+ * Aplica um conjunto de itens (sala × profissional) a um dia.
+ * - sobrescrever: substitui as alocações do dia.
+ * - mesclar: mantém as existentes e adiciona apenas profissionais ainda não
+ *   alocados naquele dia (não duplica pessoa).
+ */
+const aplicarItens = (
+  escalas: Escala[],
+  data: string,
+  itens: { salaId: string; funcionarioId: string }[],
+  modo: 'sobrescrever' | 'mesclar',
+): Escala[] => {
+  const base = modo === 'sobrescrever' ? escalas.filter((e) => e.data !== data) : escalas;
+  const ocupados = new Set(
+    base.filter((e) => e.data === data).map((e) => e.funcionarioId),
+  );
+
+  const novos: Escala[] = [];
+  itens.forEach((it, i) => {
+    if (ocupados.has(it.funcionarioId)) return; // não duplica a mesma pessoa no dia
+    ocupados.add(it.funcionarioId);
+    novos.push({
+      id: `e-rep-${Date.now()}-${i}-${Math.random().toString(36).slice(2, 6)}`,
+      data,
+      salaId: it.salaId,
+      funcionarioId: it.funcionarioId,
+    });
+  });
+
+  return [...base, ...novos];
+};
+
 export const useEscalaStore = create<EscalaState>((set, get) => ({
   funcionarios: mockFuncionarios,
   salas: mockSalas,
+  modelos: [],
 
   dataSelecionada: '2026-05-30',
   horarioReferencia: '09:00',
@@ -368,5 +409,81 @@ export const useEscalaStore = create<EscalaState>((set, get) => ({
         historico: [novoHistorico('Carga Reunida', `Normalizou a carga de ${restante.nome}.`), ...historico],
       });
     }
+  },
+
+  salvarModelo: (nome) => {
+    const { escalas, dataSelecionada, modelos, historico } = get();
+    const itens = escalas
+      .filter((e) => e.data === dataSelecionada)
+      .map((e) => ({ salaId: e.salaId, funcionarioId: e.funcionarioId }));
+
+    const modelo: ModeloEscala = {
+      id: `m-${Date.now()}`,
+      nome: nome.trim() || `Modelo ${modelos.length + 1}`,
+      itens,
+      criadoEm: new Date().toISOString(),
+    };
+
+    set({
+      modelos: [modelo, ...modelos],
+      historico: [
+        novoHistorico(
+          'Modelo Salvo',
+          `Fixou a escala de ${dataSelecionada} como modelo "${modelo.nome}" (${itens.length} alocações).`,
+        ),
+        ...historico,
+      ],
+    });
+  },
+
+  aplicarModelo: (modeloId, modo) => {
+    const { modelos, escalas, dataSelecionada, historico } = get();
+    const modelo = modelos.find((m) => m.id === modeloId);
+    if (!modelo) return;
+
+    set({
+      escalas: aplicarItens(escalas, dataSelecionada, modelo.itens, modo),
+      historico: [
+        novoHistorico(
+          'Modelo Aplicado',
+          `Aplicou o modelo "${modelo.nome}" ao dia ${dataSelecionada} (${modo === 'sobrescrever' ? 'sobrescrevendo' : 'mesclando'}).`,
+        ),
+        ...historico,
+      ],
+    });
+  },
+
+  excluirModelo: (id) => {
+    const { modelos, historico } = get();
+    const modelo = modelos.find((m) => m.id === id);
+    if (!modelo) return;
+    set({
+      modelos: modelos.filter((m) => m.id !== id),
+      historico: [novoHistorico('Modelo Removido', `Removeu o modelo "${modelo.nome}".`), ...historico],
+    });
+  },
+
+  replicarDia: (destinos, modo) => {
+    const { escalas, dataSelecionada, historico } = get();
+    const itens = escalas
+      .filter((e) => e.data === dataSelecionada)
+      .map((e) => ({ salaId: e.salaId, funcionarioId: e.funcionarioId }));
+
+    let novasEscalas = escalas;
+    destinos.forEach((d) => {
+      novasEscalas = aplicarItens(novasEscalas, d, itens, modo);
+    });
+
+    set({
+      escalas: novasEscalas,
+      historico: [
+        novoHistorico(
+          'Replicação',
+          `Replicou a escala de ${dataSelecionada} para ${destinos.length} dia(s) (${modo === 'sobrescrever' ? 'sobrescrevendo' : 'mesclando'}).`,
+        ),
+        ...historico,
+      ],
+    });
+    return destinos.length;
   },
 }));
