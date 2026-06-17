@@ -13,6 +13,7 @@ import { MapaUnidade } from './components/mapa/MapaUnidade';
 import { DetalheSala } from './components/painel/DetalheSala';
 import { VisaoSemanal } from './components/semana/VisaoSemanal';
 import { GerenciarModal } from './components/cadastro/GerenciarModal';
+import { ModoApresentacao } from './components/apresentacao/ModoApresentacao';
 import { AlertCircle, X, Award } from 'lucide-react';
 
 export const App: React.FC = () => {
@@ -20,6 +21,7 @@ export const App: React.FC = () => {
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [gerenciarAberto, setGerenciarAberto] = useState(false);
+  const [apresentacaoAberta, setApresentacaoAberta] = useState(false);
 
   // Set up sensors to allow clicking buttons and inputs within draggable elements
   const sensors = useSensors(
@@ -73,7 +75,10 @@ export const App: React.FC = () => {
       <div className="h-screen w-screen flex flex-col overflow-hidden bg-[#070b13] select-none font-sans text-slate-100 relative">
         
         {/* Top Header Row */}
-        <Header onGerenciar={() => setGerenciarAberto(true)} />
+        <Header
+          onGerenciar={() => setGerenciarAberto(true)}
+          onApresentar={() => setApresentacaoAberta(true)}
+        />
 
         {/* Work Area — planta interativa (3 colunas) ou grade semanal (cheia) */}
         <div className="flex-1 flex min-h-0 overflow-hidden relative">
@@ -135,6 +140,9 @@ export const App: React.FC = () => {
 
         {/* Gestão de cadastros (profissionais e setores) */}
         <GerenciarModal open={gerenciarAberto} onClose={() => setGerenciarAberto(false)} />
+
+        {/* Modo apresentação / impressão */}
+        <ModoApresentacao open={apresentacaoAberta} onClose={() => setApresentacaoAberta(false)} />
       </div>
     </DndContext>
   );

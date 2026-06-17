@@ -25,8 +25,11 @@ Escopo acordado em 16/06/2026 (todas as frentes abaixo + extras já incluídos).
 - Navegação entre semanas; clicar num dia/célula abre aquele dia na planta.
 - Novo `dataHelper` para a aritmética de semana; estado `modoVisao` no store.
 
-### Fase 4 — Modo apresentação / impressão
-- Vista limpa para projetar na reunião ou imprimir/fixar no mural.
+### Fase 4 — Modo apresentação / impressão  ✅ (17/06/2026)
+- Overlay limpo (banner + KPIs + grade de setores com profissionais + legenda)
+  para projetar na reunião ou imprimir/fixar no mural.
+- Botão "Apresentar" no Header; botão "Imprimir" usa `window.print()` com CSS de
+  impressão (`@media print`) que esconde a interface e preserva as cores do quadro.
 
 ### Fase 5 — Tema claro/escuro
 - Tokenizar as cores (hoje muitos hex literais nos componentes) e alternar tema.
