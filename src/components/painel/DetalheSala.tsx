@@ -62,7 +62,7 @@ export const DetalheSala: React.FC = () => {
 
           <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 min-h-0">
             {/* Room Info Card */}
-            <div className="bg-[#0c1527] border border-slate-800/80 p-3 rounded-lg flex flex-col gap-2">
+            <div className="bg-[var(--c-surface)] border border-slate-800/80 p-3 rounded-lg flex flex-col gap-2">
               <h3 className="text-base font-bold text-white font-title">{sala.nome}</h3>
               
               <div className="flex items-center justify-between text-xs text-slate-400">
@@ -115,7 +115,7 @@ export const DetalheSala: React.FC = () => {
                     return (
                       <div 
                         key={staff.id} 
-                        className="bg-[#0c1527]/50 border border-slate-800 p-3 rounded-lg flex flex-col gap-2 relative group hover:border-[#e5a93c]/20"
+                        className="bg-[var(--c-surface)]/50 border border-slate-800 p-3 rounded-lg flex flex-col gap-2 relative group hover:border-[#e5a93c]/20"
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div>
@@ -168,7 +168,7 @@ export const DetalheSala: React.FC = () => {
 
           <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 min-h-0">
             {/* Quick Actions Card */}
-            <div className="bg-[#0c1527] border border-slate-800/80 p-3 rounded-lg flex flex-col gap-2 shrink-0">
+            <div className="bg-[var(--c-surface)] border border-slate-800/80 p-3 rounded-lg flex flex-col gap-2 shrink-0">
               <h3 className="text-xs font-bold text-slate-300 font-title uppercase tracking-wider flex items-center gap-1.5">
                 <Layers size={13} className="text-[#e5a93c]" />
                 Controles de Escala

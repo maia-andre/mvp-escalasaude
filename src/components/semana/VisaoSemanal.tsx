@@ -28,9 +28,9 @@ export const VisaoSemanal: React.FC = () => {
   const colTemplate = { gridTemplateColumns: '200px repeat(7, minmax(72px, 1fr))' };
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-[#070b13] select-none">
+    <div className="flex-1 flex flex-col min-h-0 bg-[var(--c-bg)] select-none">
       {/* Toolbar */}
-      <div className="px-6 py-3 border-b border-slate-800/80 bg-[#0c1527]/30 flex flex-wrap items-center justify-between gap-3 shrink-0">
+      <div className="px-6 py-3 border-b border-slate-800/80 bg-[var(--c-surface)]/30 flex flex-wrap items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-2 text-slate-200">
           <CalendarRange size={16} className="text-[#e5a93c]" />
           <span className="text-sm font-bold font-title">Visão Semanal</span>
@@ -39,13 +39,13 @@ export const VisaoSemanal: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setDataSelecionada(somarDias(dataSelecionada, -7))}
-            className="flex items-center gap-1 text-xs text-slate-300 bg-[#0c1527] border border-slate-700/60 rounded-lg px-2.5 py-1.5 hover:border-[#e5a93c]/40 transition"
+            className="flex items-center gap-1 text-xs text-slate-300 bg-[var(--c-surface)] border border-slate-700/60 rounded-lg px-2.5 py-1.5 hover:border-[#e5a93c]/40 transition"
           >
             <ChevronLeft size={14} /> Semana anterior
           </button>
           <button
             onClick={() => setDataSelecionada(somarDias(dataSelecionada, 7))}
-            className="flex items-center gap-1 text-xs text-slate-300 bg-[#0c1527] border border-slate-700/60 rounded-lg px-2.5 py-1.5 hover:border-[#e5a93c]/40 transition"
+            className="flex items-center gap-1 text-xs text-slate-300 bg-[var(--c-surface)] border border-slate-700/60 rounded-lg px-2.5 py-1.5 hover:border-[#e5a93c]/40 transition"
           >
             Próxima semana <ChevronRight size={14} />
           </button>
@@ -57,7 +57,7 @@ export const VisaoSemanal: React.FC = () => {
         <div className="min-w-[760px]">
           {/* Header row: days */}
           <div className="grid gap-1 sticky top-0 z-10" style={colTemplate}>
-            <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-[#070b13]">
+            <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-[var(--c-bg)]">
               Setor
             </div>
             {dias.map((dia) => {
@@ -113,7 +113,7 @@ export const VisaoSemanal: React.FC = () => {
           <div className="flex flex-col gap-1">
             {salasOperacionais.map((sala) => (
               <div key={sala.id} className="grid gap-1 items-stretch" style={colTemplate}>
-                <div className="px-3 py-2 text-[11px] font-medium text-slate-300 bg-[#0c1527]/40 rounded-l-lg border-l-2 border-slate-800 truncate flex items-center">
+                <div className="px-3 py-2 text-[11px] font-medium text-slate-300 bg-[var(--c-surface)]/40 rounded-l-lg border-l-2 border-slate-800 truncate flex items-center">
                   {sala.nome}
                 </div>
                 {dias.map((dia) => {
@@ -133,7 +133,7 @@ export const VisaoSemanal: React.FC = () => {
                           ? 'bg-amber-950/15 border-amber-900/30 text-amber-500/70'
                           : cheio
                             ? 'bg-emerald-950/25 border-emerald-800/40 text-emerald-300'
-                            : 'bg-[#0c1527]/60 border-slate-800 text-slate-200'
+                            : 'bg-[var(--c-surface)]/60 border-slate-800 text-slate-200'
                       } hover:brightness-125`}
                     >
                       {vazio ? '—' : `${n}/${sala.capacidade}`}

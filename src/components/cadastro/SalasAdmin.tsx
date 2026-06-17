@@ -100,7 +100,7 @@ export const SalasAdmin: React.FC = () => {
               <div
                 key={s.id}
                 className={`group flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-all ${
-                  ativo ? 'bg-[#e5a93c]/10 border-[#e5a93c]/50' : 'bg-[#0c1527]/60 border-slate-800 hover:border-slate-700'
+                  ativo ? 'bg-[#e5a93c]/10 border-[#e5a93c]/50' : 'bg-[var(--c-surface)]/60 border-slate-800 hover:border-slate-700'
                 }`}
                 onClick={() => editar(s)}
               >

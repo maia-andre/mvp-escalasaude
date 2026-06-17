@@ -47,7 +47,7 @@ export const Sidebar: React.FC = () => {
     <aside
       ref={setNodeRef}
       className={`w-80 flex flex-col glass-panel border-r border-[rgba(229,169,60,0.15)] h-full shrink-0 select-none overflow-hidden transition-colors duration-200 ${
-        isOver ? 'bg-[#14223c]/90 border-dashed border-[#e5a93c]' : ''
+        isOver ? 'bg-[var(--c-surface-2)]/90 border-dashed border-[#e5a93c]' : ''
       }`}
     >
       {/* Title / Section Header */}
@@ -61,14 +61,14 @@ export const Sidebar: React.FC = () => {
           </p>
         </div>
 
-        <span className="bg-[#0c1527] border border-[#e5a93c]/30 text-[#e5a93c] text-xs font-mono px-2 py-0.5 rounded-full font-bold shadow-inner">
+        <span className="bg-[var(--c-surface)] border border-[#e5a93c]/30 text-[#e5a93c] text-xs font-mono px-2 py-0.5 rounded-full font-bold shadow-inner">
           {disponiveis.length} / {presentes.length}
         </span>
       </div>
 
       {/* Search Input */}
       <div className="px-4 pt-3 pb-2 shrink-0">
-        <div className="relative flex items-center bg-[#0c1527] border border-slate-800 rounded-lg focus-within:border-[#e5a93c]/50 transition-colors">
+        <div className="relative flex items-center bg-[var(--c-surface)] border border-slate-800 rounded-lg focus-within:border-[#e5a93c]/50 transition-colors">
           <Search size={14} className="text-slate-400 absolute left-3 pointer-events-none" />
           <input
             type="text"
@@ -89,7 +89,7 @@ export const Sidebar: React.FC = () => {
             className={`px-2.5 py-1 rounded-full text-[10px] font-semibold whitespace-nowrap transition-all border ${
               selectedCargo === cargo.value
                 ? 'bg-[#e5a93c] text-[#061026] border-[#e5a93c] font-bold'
-                : 'bg-[#0c1527]/50 text-slate-400 border-slate-800/80 hover:text-white hover:border-slate-700'
+                : 'bg-[var(--c-surface)]/50 text-slate-400 border-slate-800/80 hover:text-white hover:border-slate-700'
             }`}
           >
             {cargo.label}
@@ -123,7 +123,7 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Guide Info */}
-      <div className="p-3 bg-[#0c1527]/40 border-t border-slate-800/50 text-[10px] text-slate-400 flex items-center gap-2 shrink-0">
+      <div className="p-3 bg-[var(--c-surface)]/40 border-t border-slate-800/50 text-[10px] text-slate-400 flex items-center gap-2 shrink-0">
         <span className="w-1.5 h-1.5 rounded-full bg-[#e5a93c] shrink-0 animate-ping"></span>
         <span>Arraste o profissional para uma sala para alocá-lo.</span>
       </div>
