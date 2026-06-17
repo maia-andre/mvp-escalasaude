@@ -48,7 +48,7 @@ export const DetalheSala: React.FC = () => {
         // Mode 1: Room Details Selected
         <div className="flex-1 flex flex-col min-h-0">
           {/* Header */}
-          <div className="p-4 border-b border-slate-800 bg-[#0c2340]/20 flex items-center justify-between">
+          <div className="p-4 border-b border-slate-800 bg-[var(--c-surface-2)]/20 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Building2 size={16} className="text-[#e5a93c]" />
               <h2 className="text-sm font-bold font-title text-white uppercase tracking-wider">
@@ -134,7 +134,7 @@ export const DetalheSala: React.FC = () => {
                         </div>
 
                         <div className="flex items-center justify-between mt-1 text-[9px]">
-                          <span className={`px-1.5 py-0.5 rounded border ${getCargoColorClass(staff.cargo)} flex items-center gap-1`}>
+                          <span className={`px-1.5 py-0.5 rounded border cargo-badge ${getCargoColorClass(staff.cargo)} flex items-center gap-1`}>
                             <IconComp size={9} />
                             {getCargoLabel(staff.cargo)}
                           </span>
@@ -159,7 +159,7 @@ export const DetalheSala: React.FC = () => {
         // Mode 2: General Info / Audit History Log
         <div className="flex-1 flex flex-col min-h-0">
           {/* Header */}
-          <div className="p-4 border-b border-slate-800 bg-[#0c2340]/20 flex items-center gap-2">
+          <div className="p-4 border-b border-slate-800 bg-[var(--c-surface-2)]/20 flex items-center gap-2">
             <ClipboardList size={16} className="text-[#e5a93c]" />
             <h2 className="text-sm font-bold font-title text-white uppercase tracking-wider">
               Painel Operacional
@@ -207,7 +207,7 @@ export const DetalheSala: React.FC = () => {
                   historico.map((item) => (
                     <div 
                       key={item.id} 
-                      className="bg-[#0b0f19]/80 border border-slate-800 p-2.5 rounded text-[10px] leading-relaxed"
+                      className="bg-[var(--c-surface)]/70 border border-slate-800 p-2.5 rounded text-[10px] leading-relaxed"
                     >
                       <div className="flex items-center justify-between text-slate-500 font-mono text-[8px] mb-1">
                         <span>{new Date(item.timestamp).toLocaleTimeString('pt-BR')}</span>

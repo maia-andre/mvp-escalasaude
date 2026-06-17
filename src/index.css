@@ -110,6 +110,12 @@ html.theme-light ::-webkit-scrollbar-thumb {
   --color-slate-950: #020617;
 }
 
+/* No tema claro, o texto do cargo acompanha a cor do nome (menos "forçado");
+   o fundo/borda coloridos do crachá permanecem para identificação visual. */
+html.theme-light .cargo-badge {
+  color: var(--c-text);
+}
+
 @layer base {
   body {
     background-color: var(--c-bg);

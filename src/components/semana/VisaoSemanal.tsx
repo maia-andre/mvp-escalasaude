@@ -52,65 +52,69 @@ export const VisaoSemanal: React.FC = () => {
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="flex-1 overflow-auto p-4 min-h-0">
-        <div className="min-w-[760px]">
-          {/* Header row: days */}
-          <div className="grid gap-1 sticky top-0 z-10" style={colTemplate}>
-            <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-[var(--c-bg)]">
-              Setor
-            </div>
-            {dias.map((dia) => {
-              const r = rotuloDia(dia);
-              const selecionado = dia === dataSelecionada;
-              return (
-                <button
-                  key={dia}
-                  onClick={() => abrirDia(dia)}
-                  title="Abrir este dia no mapa"
-                  className={`px-2 py-2 rounded-t-lg text-center transition group ${
-                    selecionado
-                      ? 'bg-[#e5a93c]/15 border-x border-t border-[#e5a93c]/40'
-                      : 'hover:bg-slate-800/40'
-                  }`}
-                >
-                  <div className={`text-[10px] font-bold uppercase ${r.fimDeSemana ? 'text-slate-500' : 'text-slate-300'} ${selecionado ? 'text-[#e5a93c]' : ''}`}>
-                    {r.sigla}
-                  </div>
-                  <div className={`text-sm font-mono font-bold ${selecionado ? 'text-[#e5a93c]' : 'text-white'}`}>
-                    {String(r.dia).padStart(2, '0')}
-                  </div>
-                  <div className="text-[9px] text-slate-500">{r.mes}</div>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Summary rows */}
-          <div className="grid gap-1 mt-1" style={colTemplate}>
-            <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 flex items-center">Alocados</div>
-            {dias.map((dia) => (
-              <div key={dia} className={`py-1.5 text-center text-xs font-bold rounded ${dia === dataSelecionada ? 'bg-[#e5a93c]/10' : ''}`}>
-                <span className="text-emerald-400">{alocadosNoDia(dia)}</span>
+      {/* Tabela: rolagem horizontal envolve tudo; o cabeçalho de dias + resumos
+          fica fixo e apenas a lista de setores rola verticalmente. */}
+      <div className="flex-1 overflow-x-auto min-h-0 flex flex-col">
+        <div className="min-w-[760px] flex flex-col flex-1 min-h-0 px-4">
+          {/* Cabeçalho fixo */}
+          <div className="shrink-0 pt-4 bg-[var(--c-bg)]">
+            {/* Linha de dias */}
+            <div className="grid gap-1" style={colTemplate}>
+              <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Setor
               </div>
-            ))}
-          </div>
-          <div className="grid gap-1 mt-0.5 mb-2" style={colTemplate}>
-            <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 flex items-center gap-1">
-              <ShieldAlert size={11} className="text-amber-400" /> Sem cobertura
+              {dias.map((dia) => {
+                const r = rotuloDia(dia);
+                const selecionado = dia === dataSelecionada;
+                return (
+                  <button
+                    key={dia}
+                    onClick={() => abrirDia(dia)}
+                    title="Abrir este dia no mapa"
+                    className={`px-2 py-2 rounded-t-lg text-center transition group ${
+                      selecionado
+                        ? 'bg-[#e5a93c]/15 border-x border-t border-[#e5a93c]/40'
+                        : 'hover:bg-slate-800/40'
+                    }`}
+                  >
+                    <div className={`text-[10px] font-bold uppercase ${r.fimDeSemana ? 'text-slate-500' : 'text-slate-300'} ${selecionado ? 'text-[#e5a93c]' : ''}`}>
+                      {r.sigla}
+                    </div>
+                    <div className={`text-sm font-mono font-bold ${selecionado ? 'text-[#e5a93c]' : 'text-white'}`}>
+                      {String(r.dia).padStart(2, '0')}
+                    </div>
+                    <div className="text-[9px] text-slate-500">{r.mes}</div>
+                  </button>
+                );
+              })}
             </div>
-            {dias.map((dia) => {
-              const gaps = semCoberturaNoDia(dia);
-              return (
+
+            {/* Linhas-resumo */}
+            <div className="grid gap-1 mt-1" style={colTemplate}>
+              <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 flex items-center">Alocados</div>
+              {dias.map((dia) => (
                 <div key={dia} className={`py-1.5 text-center text-xs font-bold rounded ${dia === dataSelecionada ? 'bg-[#e5a93c]/10' : ''}`}>
-                  <span className={gaps > 0 ? 'text-amber-400' : 'text-slate-600'}>{gaps}</span>
+                  <span className="text-emerald-400">{alocadosNoDia(dia)}</span>
                 </div>
-              );
-            })}
+              ))}
+            </div>
+            <div className="grid gap-1 mt-0.5 mb-2" style={colTemplate}>
+              <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 flex items-center gap-1">
+                <ShieldAlert size={11} className="text-amber-400" /> Sem cobertura
+              </div>
+              {dias.map((dia) => {
+                const gaps = semCoberturaNoDia(dia);
+                return (
+                  <div key={dia} className={`py-1.5 text-center text-xs font-bold rounded ${dia === dataSelecionada ? 'bg-[#e5a93c]/10' : ''}`}>
+                    <span className={gaps > 0 ? 'text-amber-400' : 'text-slate-600'}>{gaps}</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Sector rows */}
-          <div className="flex flex-col gap-1">
+          {/* Corpo rolável: linhas de setores */}
+          <div className="flex-1 overflow-y-auto min-h-0 pb-4 flex flex-col gap-1">
             {salasOperacionais.map((sala) => (
               <div key={sala.id} className="grid gap-1 items-stretch" style={colTemplate}>
                 <div className="px-3 py-2 text-[11px] font-medium text-slate-300 bg-[var(--c-surface)]/40 rounded-l-lg border-l-2 border-slate-800 truncate flex items-center">

@@ -30,7 +30,7 @@ export const GerenciarModal: React.FC<GerenciarModalProps> = ({ open, onClose })
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-slate-800 bg-[#0c2340]/30 shrink-0">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-slate-800 bg-[var(--c-surface-2)]/30 shrink-0">
           <div className="flex items-center gap-2">
             <Settings size={16} className="text-[#e5a93c]" />
             <h2 className="text-sm font-bold font-title text-white uppercase tracking-wider">

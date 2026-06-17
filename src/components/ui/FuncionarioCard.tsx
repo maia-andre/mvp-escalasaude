@@ -55,7 +55,7 @@ export const FuncionarioCard: React.FC<FuncionarioCardProps> = ({ funcionario, i
       {/* Cargo and Shift Details */}
       <div className="flex items-center justify-between mt-1 text-[10px]">
         {/* Role Badge */}
-        <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded border ${colorClass}`}>
+        <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded border cargo-badge ${colorClass}`}>
           <IconComponent size={10} />
           <span className="font-medium">{getCargoLabel(funcionario.cargo)}</span>
         </div>
