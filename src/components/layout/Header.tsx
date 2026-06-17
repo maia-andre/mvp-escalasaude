@@ -8,7 +8,7 @@ import {
   HORARIO_MAX,
   HORARIO_PASSO,
 } from '../../utils/horarioHelper';
-import { Calendar, Clock, MapPin, Users, CheckCircle, Sunrise, Sun, Sunset, Settings } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, CheckCircle, Sunrise, Sun, Sunset, Settings, Map as MapIcon, CalendarRange } from 'lucide-react';
 
 interface HeaderProps {
   onGerenciar: () => void;
@@ -27,8 +27,10 @@ export const Header: React.FC<HeaderProps> = ({ onGerenciar }) => {
     dataSelecionada,
     horarioReferencia,
     escalas,
+    modoVisao,
     setDataSelecionada,
     setHorarioReferencia,
+    setModoVisao,
   } = useEscalaStore();
 
   // Quem está presente (e ativo) no horário de referência.
@@ -140,6 +142,27 @@ export const Header: React.FC<HeaderProps> = ({ onGerenciar }) => {
               <span className="text-[#e5a93c]">{alocadosNoHorario.length}</span> / {presentesNoHorario.length}
             </div>
           </div>
+        </div>
+
+        {/* View toggle: Mapa | Semana */}
+        <div className="flex bg-[#0c1527] border border-slate-700/50 rounded-lg p-0.5 shadow-inner">
+          {([
+            { modo: 'mapa', label: 'Mapa', Icon: MapIcon },
+            { modo: 'semana', label: 'Semana', Icon: CalendarRange },
+          ] as const).map(({ modo, label, Icon }) => (
+            <button
+              key={modo}
+              onClick={() => setModoVisao(modo)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                modoVisao === modo
+                  ? 'bg-[#e5a93c] text-[#061026] font-bold shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <Icon size={14} />
+              <span className="hidden md:inline">{label}</span>
+            </button>
+          ))}
         </div>
 
         <button
