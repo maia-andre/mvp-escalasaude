@@ -20,8 +20,10 @@ Escopo acordado em 16/06/2026 (todas as frentes abaixo + extras já incluídos).
 - Coordenadas das salas saíram do `coordMap` hardcoded e foram para `Sala.pos`
   (débito técnico nº 4 do `v1.md` resolvido) — salas agora são criáveis/editáveis.
 
-### Fase 3 — Visão semanal da escala
-- Grade semana × turnos, navegação entre dias, leitura rápida de cobertura.
+### Fase 3 — Visão semanal da escala  ✅ (16/06/2026)
+- Toggle Mapa | Semana no Header; grade setor × 7 dias com ocupação e cobertura.
+- Navegação entre semanas; clicar num dia/célula abre aquele dia na planta.
+- Novo `dataHelper` para a aritmética de semana; estado `modoVisao` no store.
 
 ### Fase 4 — Modo apresentação / impressão
 - Vista limpa para projetar na reunião ou imprimir/fixar no mural.

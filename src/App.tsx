@@ -11,11 +11,12 @@ import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
 import { MapaUnidade } from './components/mapa/MapaUnidade';
 import { DetalheSala } from './components/painel/DetalheSala';
+import { VisaoSemanal } from './components/semana/VisaoSemanal';
 import { GerenciarModal } from './components/cadastro/GerenciarModal';
 import { AlertCircle, X, Award } from 'lucide-react';
 
 export const App: React.FC = () => {
-  const { moverFuncionario, removerFuncionario } = useEscalaStore();
+  const { moverFuncionario, removerFuncionario, modoVisao } = useEscalaStore();
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [gerenciarAberto, setGerenciarAberto] = useState(false);
@@ -74,19 +75,24 @@ export const App: React.FC = () => {
         {/* Top Header Row */}
         <Header onGerenciar={() => setGerenciarAberto(true)} />
 
-        {/* 3-Column Work Area */}
+        {/* Work Area — planta interativa (3 colunas) ou grade semanal (cheia) */}
         <div className="flex-1 flex min-h-0 overflow-hidden relative">
-          
-          {/* Left Column: Available Employees */}
-          <Sidebar />
+          {modoVisao === 'semana' ? (
+            <VisaoSemanal />
+          ) : (
+            <>
+              {/* Left Column: Available Employees */}
+              <Sidebar />
 
-          {/* Center Column: Interactive SVG Map blueprint */}
-          <main className="flex-1 flex flex-col min-h-0 bg-[#070b13] overflow-hidden">
-            <MapaUnidade />
-          </main>
+              {/* Center Column: Interactive SVG Map blueprint */}
+              <main className="flex-1 flex flex-col min-h-0 bg-[#070b13] overflow-hidden">
+                <MapaUnidade />
+              </main>
 
-          {/* Right Column: Active Room / Admin controls */}
-          <DetalheSala />
+              {/* Right Column: Active Room / Admin controls */}
+              <DetalheSala />
+            </>
+          )}
         </div>
 
         {/* Bottom Status / Footer Bar */}

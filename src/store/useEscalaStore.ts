@@ -18,10 +18,14 @@ interface EscalaState {
   salaSelecionada: string | null;
   historico: HistoricoItem[];
 
+  /** Visão ativa no centro: planta interativa ou grade semanal. */
+  modoVisao: 'mapa' | 'semana';
+
   // Seleção / filtros
   setDataSelecionada: (data: string) => void;
   setHorarioReferencia: (hora: string) => void;
   setSalaSelecionada: (salaId: string | null) => void;
+  setModoVisao: (modo: 'mapa' | 'semana') => void;
 
   // Alocação (drag & drop)
   moverFuncionario: (
@@ -61,6 +65,7 @@ export const useEscalaStore = create<EscalaState>((set, get) => ({
   horarioReferencia: '09:00',
   escalas: mockEscalas,
   salaSelecionada: null,
+  modoVisao: 'mapa',
   historico: [
     {
       id: 'h0',
@@ -76,6 +81,8 @@ export const useEscalaStore = create<EscalaState>((set, get) => ({
   setHorarioReferencia: (hora) => set({ horarioReferencia: hora }),
 
   setSalaSelecionada: (salaId) => set({ salaSelecionada: salaId }),
+
+  setModoVisao: (modo) => set({ modoVisao: modo }),
 
   hydrate: (partial) => set(partial),
 
