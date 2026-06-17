@@ -11,7 +11,7 @@ import {
 } from '../../utils/cargoHelper';
 import { horaParaMinutos } from '../../utils/horarioHelper';
 import { ChipMultiSelect } from './ChipMultiSelect';
-import { Plus, Pencil, Trash2, Save, X, UserPlus } from 'lucide-react';
+import { Plus, Trash2, Save, X, UserPlus, Scissors, Combine, AlertTriangle } from 'lucide-react';
 
 const novoFuncionario = (): Funcionario => ({
   id: `f-${Date.now()}`,
@@ -26,9 +26,17 @@ const novoFuncionario = (): Funcionario => ({
 });
 
 export const ProfissionaisAdmin: React.FC = () => {
-  const { funcionarios, salas, salvarFuncionario, excluirFuncionario } = useEscalaStore();
+  const {
+    funcionarios,
+    salas,
+    salvarFuncionario,
+    excluirFuncionario,
+    dividirCargaFuncionario,
+    juntarCargaFuncionario,
+  } = useEscalaStore();
   const [form, setForm] = useState<Funcionario | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const [aviso, setAviso] = useState<string | null>(null);
 
   const upd = (patch: Partial<Funcionario>) => setForm((f) => (f ? { ...f, ...patch } : f));
 
@@ -85,6 +93,18 @@ export const ProfissionaisAdmin: React.FC = () => {
           </button>
         </div>
 
+        {aviso && (
+          <div className="mx-3 mt-2 px-3 py-2 rounded-lg bg-[var(--c-surface-2)] border border-amber-500/40 text-slate-200 text-[10px] flex items-start justify-between gap-2 shrink-0">
+            <span className="flex items-center gap-1.5">
+              <AlertTriangle size={12} className="text-amber-400 shrink-0" />
+              {aviso}
+            </span>
+            <button onClick={() => setAviso(null)} className="shrink-0 text-slate-500 hover:text-slate-300">
+              <X size={12} />
+            </button>
+          </div>
+        )}
+
         <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2 min-h-0">
           {funcionarios.map((f) => {
             const Icon = getCargoIcon(f.cargo);
@@ -101,14 +121,46 @@ export const ProfissionaisAdmin: React.FC = () => {
               >
                 <span className={`shrink-0 w-1.5 h-1.5 rounded-full ${f.ativo ? 'bg-emerald-400' : 'bg-slate-600'}`} />
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs font-bold text-slate-100 truncate">{f.nome || '(sem nome)'}</div>
+                  <div className="text-xs font-bold text-slate-100 truncate flex items-center gap-1.5">
+                    <span className="truncate">{f.nome || '(sem nome)'}</span>
+                    {f.metade && (
+                      <span className="shrink-0 text-[8px] font-bold px-1 py-0.5 rounded border border-[#e5a93c]/40 text-[#e5a93c] bg-[#e5a93c]/10">
+                        {f.metade === 'manha' ? 'MANHÃ' : 'TARDE'}
+                      </span>
+                    )}
+                  </div>
                   <div className="text-[10px] text-slate-500 font-mono">
                     Mat. {f.matricula || '—'} • {f.horario.inicio}–{f.horario.fim}
                   </div>
                 </div>
-                <span className={`flex items-center gap-1 px-1.5 py-0.5 rounded border text-[9px] shrink-0 ${getCargoColorClass(f.cargo)}`}>
+                <span className={`flex items-center gap-1 px-1.5 py-0.5 rounded border cargo-badge text-[9px] shrink-0 ${getCargoColorClass(f.cargo)}`}>
                   <Icon size={9} /> {getCargoLabel(f.cargo)}
                 </span>
+                {f.metade ? (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      juntarCargaFuncionario(f.id);
+                    }}
+                    className="text-slate-500 hover:text-[#e5a93c] p-1 rounded hover:bg-[#e5a93c]/10 shrink-0 transition"
+                    title="Juntar a carga horária (desfazer divisão)"
+                  >
+                    <Combine size={13} />
+                  </button>
+                ) : (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const r = dividirCargaFuncionario(f.id);
+                      if (!r.success && r.error) setAviso(r.error);
+                      else setAviso(null);
+                    }}
+                    className="text-slate-500 hover:text-[#e5a93c] p-1 rounded hover:bg-[#e5a93c]/10 shrink-0 transition"
+                    title="Dividir carga horária (manhã/tarde)"
+                  >
+                    <Scissors size={13} />
+                  </button>
+                )}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
