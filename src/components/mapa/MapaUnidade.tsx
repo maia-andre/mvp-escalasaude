@@ -25,7 +25,7 @@ export const MapaUnidade: React.FC = () => {
   return (
     <div className="flex-1 flex flex-col min-h-0 select-none">
       {/* Upper Status Bar inside center panel */}
-      <div className="px-6 py-3 border-b border-slate-800/80 bg-[#0c1527]/30 flex flex-wrap items-center justify-between gap-4 shrink-0 text-xs">
+      <div className="px-6 py-3 border-b border-slate-800/80 bg-[var(--c-surface)]/30 flex flex-wrap items-center justify-between gap-4 shrink-0 text-xs">
         <div className="flex items-center gap-2 text-slate-400">
           <InfoIcon size={14} className="text-[#e5a93c]" />
           <span>
@@ -52,7 +52,7 @@ export const MapaUnidade: React.FC = () => {
 
       {/* SVG Canvas Map */}
       <div
-        className="flex-1 overflow-auto p-6 flex items-center justify-center min-h-0 bg-[#070b13] relative"
+        className="flex-1 overflow-auto p-6 flex items-center justify-center min-h-0 bg-[var(--c-bg)] relative"
         onClick={() => setSalaSelecionada(null)}
       >
         <div className="w-full max-w-[1000px] aspect-[1000/680] max-h-full">

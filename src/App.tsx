@@ -100,7 +100,7 @@ export const App: React.FC = () => {
               <Sidebar />
 
               {/* Center Column: Interactive SVG Map blueprint */}
-              <main className="flex-1 flex flex-col min-h-0 bg-[#070b13] overflow-hidden">
+              <main className="flex-1 flex flex-col min-h-0 bg-[var(--c-bg)] overflow-hidden">
                 <MapaUnidade />
               </main>
 
@@ -129,7 +129,7 @@ export const App: React.FC = () => {
 
         {/* Floating Custom Toast Error Warning Alert (SJC Gold styled) */}
         {toastMessage && (
-          <div className="absolute bottom-12 right-6 z-50 animate-bounce shake-element max-w-sm bg-[#0c1c3f] border border-red-500/50 rounded-xl p-4 shadow-2xl flex gap-3 items-start backdrop-blur-md">
+          <div className="surface-dark absolute bottom-12 right-6 z-50 animate-bounce shake-element max-w-sm bg-[#0c1c3f] border border-red-500/50 rounded-xl p-4 shadow-2xl flex gap-3 items-start backdrop-blur-md">
             <div className="p-1 rounded bg-red-950/60 border border-red-900/50 shrink-0 text-red-400">
               <AlertCircle size={18} />
             </div>
