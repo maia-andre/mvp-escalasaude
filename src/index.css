@@ -161,3 +161,27 @@
   background: #0c1527;
   color: #e2e8f0;
 }
+
+/* Modo apresentação / impressão — preserva as cores ao imprimir/projetar. */
+.apres-board {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible !important;
+  }
+  .print-area {
+    position: fixed !important;
+    inset: 0 !important;
+    overflow: visible !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

@@ -8,10 +8,11 @@ import {
   HORARIO_MAX,
   HORARIO_PASSO,
 } from '../../utils/horarioHelper';
-import { Calendar, Clock, MapPin, Users, CheckCircle, Sunrise, Sun, Sunset, Settings, Map as MapIcon, CalendarRange } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, CheckCircle, Sunrise, Sun, Sunset, Settings, Map as MapIcon, CalendarRange, Presentation } from 'lucide-react';
 
 interface HeaderProps {
   onGerenciar: () => void;
+  onApresentar: () => void;
 }
 
 const PRESETS: { label: string; hora: string; icon: React.ComponentType<{ size?: number }> }[] = [
@@ -21,7 +22,7 @@ const PRESETS: { label: string; hora: string; icon: React.ComponentType<{ size?:
   { label: 'Fim', hora: '18:00', icon: Sunset },
 ];
 
-export const Header: React.FC<HeaderProps> = ({ onGerenciar }) => {
+export const Header: React.FC<HeaderProps> = ({ onGerenciar, onApresentar }) => {
   const {
     funcionarios,
     dataSelecionada,
@@ -164,6 +165,15 @@ export const Header: React.FC<HeaderProps> = ({ onGerenciar }) => {
             </button>
           ))}
         </div>
+
+        <button
+          onClick={onApresentar}
+          className="flex items-center gap-2 bg-[#0c1527] hover:bg-[#13315c] border border-slate-700/60 hover:border-[#e5a93c]/60 text-slate-200 px-3 py-2 rounded-lg transition-all shadow-md"
+          title="Modo apresentação / impressão"
+        >
+          <Presentation size={15} className="text-[#e5a93c]" />
+          <span className="text-xs font-bold hidden sm:inline">Apresentar</span>
+        </button>
 
         <button
           onClick={onGerenciar}
