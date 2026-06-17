@@ -40,6 +40,29 @@ Escopo acordado em 16/06/2026 (todas as frentes abaixo + extras já incluídos).
   propósito ("telas táticas"), evitando problemas de contraste no croqui.
 - ⚠️ Precisa de **validação visual** (foi implementado sem preview no ambiente).
 
+### Fase 6 — Dividir carga horária (turno partido)  🔜 planejado
+Botão **"Dividir carga horária"** na tela de Gerência (por profissional). Permite
+que um profissional fique disponível **duas vezes no mesmo dia**, em faixas que
+**não se sobrepõem** (ex.: Dra. Daniela de manhã no Acolhimento e à tarde no
+Consultório), para a gerente já programar isso.
+
+Abordagem proposta (aproveita o modelo atual, sem grande refactor):
+- O botão divide a janela do profissional em duas (no ponto médio ou num horário
+  escolhido) e gera uma **segunda "instância" vinculada** do profissional (mesma
+  matrícula e capacidades), uma cobrindo a manhã e outra a tarde.
+- Como as janelas não se sobrepõem, cada instância é alocável a uma sala diferente
+  sem conflito, usando a regra de presença por horário **já existente**.
+- Marcar o vínculo (campo `divididoDe` / sufixo "(Manhã)"/"(Tarde)") para permitir
+  "juntar de volta" e para a auditoria.
+- Alternativa mais estrutural (futuro): a **alocação** carregar a própria janela de
+  horário, permitindo N alocações/dia por pessoa nativamente.
+
+### Fase 7 — Fixar e replicar escala  🔜 planejado
+- **Fixar** a escala de um dia como modelo (escala-base nomeada).
+- **Replicar** um dia para um intervalo (semana toda, dias úteis do mês…) com um
+  clique, gerando as alocações nos dias de destino.
+- Considerar: pular fins de semana; sobrescrever vs. mesclar; e desfazer.
+
 ### Transversal — Polimento (próximo / contínuo)
 - Estados vazios, feedback de adequação de cargo **no mapa** (não só no painel),
   onboarding, micro-interações, acessibilidade, e ajuste fino do tema claro.
