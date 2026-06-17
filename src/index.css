@@ -30,10 +30,118 @@
   --font-title: 'Outfit', sans-serif;
 }
 
+/* ===== Tema (claro / escuro) ===== */
+:root {
+  --c-bg: #070b13;          /* fundo geral da interface */
+  --c-surface: #0c1527;     /* superfícies: cards, inputs, pílulas */
+  --c-surface-2: #14223c;   /* superfície elevada / hover */
+  --c-text: #f1f5f9;
+  --c-border: rgba(148, 163, 184, 0.18);
+  --c-room-fill: rgba(12, 21, 39, 0.4);     /* preenchimento das salas no SVG */
+  --c-room-stroke: rgba(229, 169, 60, 0.15); /* contorno das salas no SVG */
+}
+
+/* Tema claro: superfícies claras + inversão da escala slate do Tailwind, o que
+   adapta automaticamente text-/bg-/border-slate-* em toda a "chrome" da interface.
+   A planta interativa (SVG) e o modo apresentação permanecem escuros de propósito. */
+html.theme-light {
+  --c-bg: #eef2f7;
+  --c-surface: #ffffff;
+  --c-surface-2: #e8eef6;
+  --c-text: #0f172a;
+  --c-border: rgba(15, 23, 42, 0.12);
+  --c-room-fill: rgba(255, 255, 255, 0.62);
+  --c-room-stroke: rgba(15, 23, 42, 0.22);
+
+  /* Texto branco literal (text-white) precisa virar escuro na "chrome" clara. */
+  --color-white: #0f172a;
+
+  --color-slate-50: #0f172a;
+  --color-slate-100: #1e293b;
+  --color-slate-200: #334155;
+  --color-slate-300: #475569;
+  --color-slate-400: #57657a;
+  --color-slate-500: #64748b;
+  --color-slate-600: #94a3b8;
+  --color-slate-700: #cbd5e1;
+  --color-slate-800: #e2e8f0;
+  --color-slate-900: #f1f5f9;
+  --color-slate-950: #f8fafc;
+}
+
+html.theme-light .glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: 0 4px 24px 0 rgba(15, 23, 42, 0.07);
+}
+
+html.theme-light .glass-card {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+html.theme-light .glass-card:hover {
+  background: #ffffff;
+  border-color: rgba(229, 169, 60, 0.5);
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08), 0 4px 14px rgba(15, 23, 42, 0.09);
+}
+
+html.theme-light ::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.06);
+}
+html.theme-light ::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.2);
+}
+
+/* Superfícies que permanecem escuras mesmo no tema claro (apresentação, toast):
+   reasserta a paleta padrão localmente para o texto seguir legível. */
+.surface-dark {
+  --color-white: #ffffff;
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
+}
+
+/* No tema claro, o texto do cargo acompanha a cor do nome (menos "forçado");
+   o fundo/borda coloridos do crachá permanecem para identificação visual. */
+html.theme-light .cargo-badge {
+  color: var(--c-text);
+}
+
+/* Células da grade semanal (cobertura) — tons que funcionam nos dois temas. */
+.cel-vazio {
+  background: color-mix(in oklab, #f59e0b 15%, transparent);
+  border-color: color-mix(in oklab, #b45309 45%, transparent);
+  color: #fbbf24;
+}
+.cel-ok {
+  background: color-mix(in oklab, #10b981 16%, transparent);
+  border-color: color-mix(in oklab, #059669 48%, transparent);
+  color: #6ee7b7;
+}
+html.theme-light .cel-vazio {
+  background: color-mix(in oklab, #f59e0b 22%, transparent);
+  border-color: color-mix(in oklab, #b45309 35%, transparent);
+  color: #b45309;
+}
+html.theme-light .cel-ok {
+  background: color-mix(in oklab, #10b981 22%, transparent);
+  border-color: color-mix(in oklab, #059669 40%, transparent);
+  color: #047857;
+}
+
 @layer base {
   body {
-    background-color: var(--color-sjc-blue-950);
-    color: var(--color-sjc-silver-100);
+    background-color: var(--c-bg);
+    color: var(--c-text);
     font-family: var(--font-sans);
   }
 
@@ -138,12 +246,12 @@
 /* Campos de formulário de cadastro */
 .input-cad {
   width: 100%;
-  background: #0c1527;
-  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
   border-radius: 0.5rem;
   padding: 0.5rem 0.625rem;
   font-size: 0.75rem;
-  color: #e2e8f0;
+  color: var(--c-text);
   outline: none;
   transition: border-color 0.15s ease;
 }
@@ -153,13 +261,13 @@
 }
 
 .input-cad::placeholder {
-  color: #64748b;
+  color: #94a3b8;
 }
 
-/* Opções dos selects nativos no tema escuro */
+/* Opções dos selects nativos seguem a superfície do tema */
 .input-cad option {
-  background: #0c1527;
-  color: #e2e8f0;
+  background: var(--c-surface);
+  color: var(--c-text);
 }
 
 /* Modo apresentação / impressão — preserva as cores ao imprimir/projetar. */

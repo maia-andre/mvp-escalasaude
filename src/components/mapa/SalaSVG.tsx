@@ -35,13 +35,13 @@ export const SalaSVG: React.FC<SalaSVGProps> = ({
   const isFull = funcionariosAlocados.length >= sala.capacidade;
   const isEmpty = funcionariosAlocados.length === 0;
 
-  // SJC Blue/Gold theme colors
-  const baseFill = "rgba(12, 21, 39, 0.4)";
-  const strokeColor = isSelected 
-    ? "#e5a93c" 
-    : isOver 
-      ? "#3b82f6" 
-      : "rgba(229, 169, 60, 0.15)";
+  // SJC Blue/Gold theme colors (preenchimento/contorno seguem o tema)
+  const baseFill = "var(--c-room-fill)";
+  const strokeColor = isSelected
+    ? "#e5a93c"
+    : isOver
+      ? "#3b82f6"
+      : "var(--c-room-stroke)";
   const strokeWidth = isSelected ? 2.5 : isOver ? 2 : 1;
 
   // Custom visual indicator colors

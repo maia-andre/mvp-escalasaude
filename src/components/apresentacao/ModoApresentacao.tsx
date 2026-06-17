@@ -45,7 +45,7 @@ export const ModoApresentacao: React.FC<ModoApresentacaoProps> = ({ open, onClos
   const dataExtenso = `${r.sigla}, ${String(r.dia).padStart(2, '0')} ${r.mes} ${ano}`;
 
   return (
-    <div className="fixed inset-0 z-[100] overflow-auto print-area apres-board bg-[#070b13] text-slate-100">
+    <div className="fixed inset-0 z-[100] overflow-auto print-area apres-board surface-dark bg-[#070b13] text-slate-100">
       {/* Floating controls (não imprimem) */}
       <div className="no-print fixed top-4 right-4 z-10 flex gap-2">
         <button

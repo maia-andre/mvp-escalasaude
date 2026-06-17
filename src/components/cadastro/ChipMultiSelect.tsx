@@ -40,7 +40,7 @@ export const ChipMultiSelect: React.FC<ChipMultiSelectProps> = ({
             className={`px-2 py-1 rounded-md text-[10px] font-semibold border transition-all ${
               active
                 ? 'bg-[#e5a93c] text-[#061026] border-[#e5a93c]'
-                : 'bg-[#0c1527] text-slate-400 border-slate-700/80 hover:text-white hover:border-slate-600'
+                : 'bg-[var(--c-surface)] text-slate-400 border-slate-700/80 hover:text-white hover:border-slate-600'
             }`}
           >
             {o.label}

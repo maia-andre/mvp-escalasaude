@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   DndContext, 
   DragEndEvent, 
@@ -17,7 +17,17 @@ import { ModoApresentacao } from './components/apresentacao/ModoApresentacao';
 import { AlertCircle, X, Award } from 'lucide-react';
 
 export const App: React.FC = () => {
-  const { moverFuncionario, removerFuncionario, modoVisao } = useEscalaStore();
+  const { moverFuncionario, removerFuncionario, modoVisao, tema } = useEscalaStore();
+
+  // Aplica o tema na raiz do documento e persiste a preferência.
+  useEffect(() => {
+    document.documentElement.classList.toggle('theme-light', tema === 'claro');
+    try {
+      localStorage.setItem('escalasaude:tema', tema);
+    } catch {
+      /* ignore */
+    }
+  }, [tema]);
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [gerenciarAberto, setGerenciarAberto] = useState(false);
@@ -72,7 +82,7 @@ export const App: React.FC = () => {
 
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-      <div className="h-screen w-screen flex flex-col overflow-hidden bg-[#070b13] select-none font-sans text-slate-100 relative">
+      <div className="h-screen w-screen flex flex-col overflow-hidden bg-[var(--c-bg)] select-none font-sans text-slate-100 relative">
         
         {/* Top Header Row */}
         <Header
@@ -90,7 +100,7 @@ export const App: React.FC = () => {
               <Sidebar />
 
               {/* Center Column: Interactive SVG Map blueprint */}
-              <main className="flex-1 flex flex-col min-h-0 bg-[#070b13] overflow-hidden">
+              <main className="flex-1 flex flex-col min-h-0 bg-[var(--c-bg)] overflow-hidden">
                 <MapaUnidade />
               </main>
 
@@ -101,7 +111,7 @@ export const App: React.FC = () => {
         </div>
 
         {/* Bottom Status / Footer Bar */}
-        <footer className="h-8 bg-[#0c1527] border-t border-[rgba(229,169,60,0.15)] flex items-center justify-between px-6 text-[10px] text-slate-500 shrink-0 z-10 select-none">
+        <footer className="h-8 bg-[var(--c-surface)] border-t border-[rgba(229,169,60,0.15)] flex items-center justify-between px-6 text-[10px] text-slate-500 shrink-0 z-10 select-none">
           <div className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
             <span>Sistema Conectado (Offline Demo)</span>
@@ -119,7 +129,7 @@ export const App: React.FC = () => {
 
         {/* Floating Custom Toast Error Warning Alert (SJC Gold styled) */}
         {toastMessage && (
-          <div className="absolute bottom-12 right-6 z-50 animate-bounce shake-element max-w-sm bg-[#0c1c3f] border border-red-500/50 rounded-xl p-4 shadow-2xl flex gap-3 items-start backdrop-blur-md">
+          <div className="surface-dark absolute bottom-12 right-6 z-50 animate-bounce shake-element max-w-sm bg-[#0c1c3f] border border-red-500/50 rounded-xl p-4 shadow-2xl flex gap-3 items-start backdrop-blur-md">
             <div className="p-1 rounded bg-red-950/60 border border-red-900/50 shrink-0 text-red-400">
               <AlertCircle size={18} />
             </div>

@@ -8,7 +8,7 @@ import {
   HORARIO_MAX,
   HORARIO_PASSO,
 } from '../../utils/horarioHelper';
-import { Calendar, Clock, MapPin, Users, CheckCircle, Sunrise, Sun, Sunset, Settings, Map as MapIcon, CalendarRange, Presentation } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, CheckCircle, Sunrise, Sun, Sunset, Settings, Map as MapIcon, CalendarRange, Presentation, Moon } from 'lucide-react';
 
 interface HeaderProps {
   onGerenciar: () => void;
@@ -29,9 +29,11 @@ export const Header: React.FC<HeaderProps> = ({ onGerenciar, onApresentar }) => 
     horarioReferencia,
     escalas,
     modoVisao,
+    tema,
     setDataSelecionada,
     setHorarioReferencia,
     setModoVisao,
+    alternarTema,
   } = useEscalaStore();
 
   // Quem está presente (e ativo) no horário de referência.
@@ -70,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({ onGerenciar, onApresentar }) => 
       {/* Date + Reference-time controls */}
       <div className="flex flex-wrap items-center gap-4 flex-1 lg:justify-center min-w-0">
         {/* Date Selector */}
-        <div className="flex items-center gap-2 bg-[#0c1527] border border-slate-700/50 rounded-lg px-3 py-1.5 shadow-inner shrink-0">
+        <div className="flex items-center gap-2 bg-[var(--c-surface)] border border-slate-700/50 rounded-lg px-3 py-1.5 shadow-inner shrink-0">
           <Calendar size={15} className="text-[#e5a93c]" />
           <input
             type="date"
@@ -81,7 +83,7 @@ export const Header: React.FC<HeaderProps> = ({ onGerenciar, onApresentar }) => 
         </div>
 
         {/* Reference-time slider */}
-        <div className="flex items-center gap-3 bg-[#0c1527] border border-slate-700/50 rounded-lg px-3 py-1.5 shadow-inner min-w-[280px] flex-1 max-w-md">
+        <div className="flex items-center gap-3 bg-[var(--c-surface)] border border-slate-700/50 rounded-lg px-3 py-1.5 shadow-inner min-w-[280px] flex-1 max-w-md">
           <Clock size={15} className="text-[#e5a93c] shrink-0" />
           <div className="flex flex-col flex-1 min-w-0">
             <div className="flex items-center justify-between text-[10px] text-slate-400 leading-none mb-1">
@@ -114,7 +116,7 @@ export const Header: React.FC<HeaderProps> = ({ onGerenciar, onApresentar }) => 
                   className={`p-1.5 rounded border transition-all ${
                     active
                       ? 'bg-[#e5a93c] text-[#061026] border-[#e5a93c]'
-                      : 'bg-[#0c1527]/50 text-slate-400 border-slate-800/80 hover:text-white hover:border-slate-700'
+                      : 'bg-[var(--c-surface)]/50 text-slate-400 border-slate-800/80 hover:text-white hover:border-slate-700'
                   }`}
                 >
                   <Icon size={13} />
@@ -127,7 +129,7 @@ export const Header: React.FC<HeaderProps> = ({ onGerenciar, onApresentar }) => 
 
       {/* Quick KPIs + Manage */}
       <div className="flex items-center gap-3 shrink-0">
-        <div className="flex items-center gap-2 bg-[#0c1527]/60 px-3 py-1.5 rounded-lg border border-slate-800">
+        <div className="flex items-center gap-2 bg-[var(--c-surface)]/60 px-3 py-1.5 rounded-lg border border-slate-800">
           <Users size={14} className="text-blue-400" />
           <div className="text-[11px] leading-tight">
             <div className="text-slate-400">Presentes agora</div>
@@ -135,7 +137,7 @@ export const Header: React.FC<HeaderProps> = ({ onGerenciar, onApresentar }) => 
           </div>
         </div>
 
-        <div className="flex items-center gap-2 bg-[#0c1527]/60 px-3 py-1.5 rounded-lg border border-slate-800">
+        <div className="flex items-center gap-2 bg-[var(--c-surface)]/60 px-3 py-1.5 rounded-lg border border-slate-800">
           <CheckCircle size={14} className="text-emerald-400" />
           <div className="text-[11px] leading-tight">
             <div className="text-slate-400">Alocados</div>
@@ -146,7 +148,7 @@ export const Header: React.FC<HeaderProps> = ({ onGerenciar, onApresentar }) => 
         </div>
 
         {/* View toggle: Mapa | Semana */}
-        <div className="flex bg-[#0c1527] border border-slate-700/50 rounded-lg p-0.5 shadow-inner">
+        <div className="flex bg-[var(--c-surface)] border border-slate-700/50 rounded-lg p-0.5 shadow-inner">
           {([
             { modo: 'mapa', label: 'Mapa', Icon: MapIcon },
             { modo: 'semana', label: 'Semana', Icon: CalendarRange },
@@ -167,8 +169,16 @@ export const Header: React.FC<HeaderProps> = ({ onGerenciar, onApresentar }) => 
         </div>
 
         <button
+          onClick={alternarTema}
+          className="flex items-center justify-center bg-[var(--c-surface)] hover:bg-[#13315c] border border-slate-700/60 hover:border-[#e5a93c]/60 text-[#e5a93c] p-2 rounded-lg transition-all shadow-md"
+          title={tema === 'claro' ? 'Mudar para tema escuro' : 'Mudar para tema claro'}
+        >
+          {tema === 'claro' ? <Moon size={15} /> : <Sun size={15} />}
+        </button>
+
+        <button
           onClick={onApresentar}
-          className="flex items-center gap-2 bg-[#0c1527] hover:bg-[#13315c] border border-slate-700/60 hover:border-[#e5a93c]/60 text-slate-200 px-3 py-2 rounded-lg transition-all shadow-md"
+          className="flex items-center gap-2 bg-[var(--c-surface)] hover:bg-[#13315c] border border-slate-700/60 hover:border-[#e5a93c]/60 text-slate-200 px-3 py-2 rounded-lg transition-all shadow-md"
           title="Modo apresentação / impressão"
         >
           <Presentation size={15} className="text-[#e5a93c]" />

@@ -20,12 +20,15 @@ interface EscalaState {
 
   /** Visão ativa no centro: planta interativa ou grade semanal. */
   modoVisao: 'mapa' | 'semana';
+  /** Tema da interface (a planta e a apresentação são sempre escuras). */
+  tema: 'escuro' | 'claro';
 
   // Seleção / filtros
   setDataSelecionada: (data: string) => void;
   setHorarioReferencia: (hora: string) => void;
   setSalaSelecionada: (salaId: string | null) => void;
   setModoVisao: (modo: 'mapa' | 'semana') => void;
+  alternarTema: () => void;
 
   // Alocação (drag & drop)
   moverFuncionario: (
@@ -49,6 +52,14 @@ interface EscalaState {
 
 const USUARIO = 'Gerente Geral (SJC)';
 
+const temaInicial = (): 'escuro' | 'claro' => {
+  try {
+    return localStorage.getItem('escalasaude:tema') === 'claro' ? 'claro' : 'escuro';
+  } catch {
+    return 'escuro';
+  }
+};
+
 const novoHistorico = (acao: string, detalhes: string): HistoricoItem => ({
   id: `h-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
   acao,
@@ -66,6 +77,7 @@ export const useEscalaStore = create<EscalaState>((set, get) => ({
   escalas: mockEscalas,
   salaSelecionada: null,
   modoVisao: 'mapa',
+  tema: temaInicial(),
   historico: [
     {
       id: 'h0',
@@ -83,6 +95,8 @@ export const useEscalaStore = create<EscalaState>((set, get) => ({
   setSalaSelecionada: (salaId) => set({ salaSelecionada: salaId }),
 
   setModoVisao: (modo) => set({ modoVisao: modo }),
+
+  alternarTema: () => set((s) => ({ tema: s.tema === 'claro' ? 'escuro' : 'claro' })),
 
   hydrate: (partial) => set(partial),
 
