@@ -134,9 +134,9 @@ export const VisaoSemanal: React.FC = () => {
                         selecionado ? 'ring-1 ring-[#e5a93c]/40' : ''
                       } ${
                         vazio
-                          ? 'bg-amber-950/15 border-amber-900/30 text-amber-500/70'
+                          ? 'cel-vazio'
                           : cheio
-                            ? 'bg-emerald-950/25 border-emerald-800/40 text-emerald-300'
+                            ? 'cel-ok'
                             : 'bg-[var(--c-surface)]/60 border-slate-800 text-slate-200'
                       } hover:brightness-125`}
                     >

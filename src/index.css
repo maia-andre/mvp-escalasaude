@@ -116,6 +116,28 @@ html.theme-light .cargo-badge {
   color: var(--c-text);
 }
 
+/* Células da grade semanal (cobertura) — tons que funcionam nos dois temas. */
+.cel-vazio {
+  background: color-mix(in oklab, #f59e0b 15%, transparent);
+  border-color: color-mix(in oklab, #b45309 45%, transparent);
+  color: #fbbf24;
+}
+.cel-ok {
+  background: color-mix(in oklab, #10b981 16%, transparent);
+  border-color: color-mix(in oklab, #059669 48%, transparent);
+  color: #6ee7b7;
+}
+html.theme-light .cel-vazio {
+  background: color-mix(in oklab, #f59e0b 22%, transparent);
+  border-color: color-mix(in oklab, #b45309 35%, transparent);
+  color: #b45309;
+}
+html.theme-light .cel-ok {
+  background: color-mix(in oklab, #10b981 22%, transparent);
+  border-color: color-mix(in oklab, #059669 40%, transparent);
+  color: #047857;
+}
+
 @layer base {
   body {
     background-color: var(--c-bg);
