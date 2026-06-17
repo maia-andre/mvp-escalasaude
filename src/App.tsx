@@ -14,6 +14,7 @@ import { DetalheSala } from './components/painel/DetalheSala';
 import { VisaoSemanal } from './components/semana/VisaoSemanal';
 import { GerenciarModal } from './components/cadastro/GerenciarModal';
 import { ModoApresentacao } from './components/apresentacao/ModoApresentacao';
+import { EscalaModal } from './components/escala/EscalaModal';
 import { AlertCircle, X, Award } from 'lucide-react';
 
 export const App: React.FC = () => {
@@ -32,6 +33,7 @@ export const App: React.FC = () => {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [gerenciarAberto, setGerenciarAberto] = useState(false);
   const [apresentacaoAberta, setApresentacaoAberta] = useState(false);
+  const [escalaModalAberto, setEscalaModalAberto] = useState(false);
 
   // Set up sensors to allow clicking buttons and inputs within draggable elements
   const sensors = useSensors(
@@ -93,7 +95,7 @@ export const App: React.FC = () => {
         {/* Work Area — planta interativa (3 colunas) ou grade semanal (cheia) */}
         <div className="flex-1 flex min-h-0 overflow-hidden relative">
           {modoVisao === 'semana' ? (
-            <VisaoSemanal />
+            <VisaoSemanal onReplicar={() => setEscalaModalAberto(true)} />
           ) : (
             <>
               {/* Left Column: Available Employees */}
@@ -105,7 +107,7 @@ export const App: React.FC = () => {
               </main>
 
               {/* Right Column: Active Room / Admin controls */}
-              <DetalheSala />
+              <DetalheSala onReplicar={() => setEscalaModalAberto(true)} />
             </>
           )}
         </div>
@@ -153,6 +155,9 @@ export const App: React.FC = () => {
 
         {/* Modo apresentação / impressão */}
         <ModoApresentacao open={apresentacaoAberta} onClose={() => setApresentacaoAberta(false)} />
+
+        {/* Replicar escala / modelos */}
+        <EscalaModal open={escalaModalAberto} onClose={() => setEscalaModalAberto(false)} />
       </div>
     </DndContext>
   );

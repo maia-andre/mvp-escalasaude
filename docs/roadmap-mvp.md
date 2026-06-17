@@ -61,11 +61,15 @@ Abordagem proposta (aproveita o modelo atual, sem grande refactor):
 - Alternativa mais estrutural (futuro): a **alocação** carregar a própria janela de
   horário, permitindo N alocações/dia por pessoa nativamente.
 
-### Fase 7 — Fixar e replicar escala  🔜 planejado
-- **Fixar** a escala de um dia como modelo (escala-base nomeada).
-- **Replicar** um dia para um intervalo (semana toda, dias úteis do mês…) com um
-  clique, gerando as alocações nos dias de destino.
-- Considerar: pular fins de semana; sobrescrever vs. mesclar; e desfazer.
+### Fase 7 — Fixar e replicar escala  ✅ (17/06/2026)
+- **Fixar** a escala do dia como **modelo nomeado** e **aplicar** um modelo ao dia
+  selecionado (aba "Modelos").
+- **Replicar** o dia atual para um intervalo (presets: resto da semana, próximos
+  7/30 dias, ou datas livres), com **pular fins de semana** e modo **sobrescrever**
+  vs **mesclar** (mesclar não duplica a mesma pessoa no dia).
+- Modal "Replicar / Modelos" acessível pelo painel de controles e pela Visão Semanal.
+- Desfazer: via "Limpar Dia" no destino ou re-replicar; tudo fica no log de auditoria.
+  (Undo granular fica para o polimento.)
 
 ### Transversal — Polimento (próximo / contínuo)
 - Estados vazios, feedback de adequação de cargo **no mapa** (não só no painel),
