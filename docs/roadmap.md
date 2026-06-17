@@ -1,99 +1,93 @@
 # Roadmap — EscalaSaúde
 
-Plano de evolução do MVP **EscalaSaúde** (painel visual de escala de UBS, São José
-dos Campos). Este documento é a referência viva da direção do projeto. O progresso
-por fase é registrado em arquivos `docs/status-*.md`.
+Plano de evolução do **EscalaSaúde** (painel visual de escala de UBS, São José dos
+Campos). Documento **único e vivo** da direção do projeto. O progresso por etapa é
+registrado em `docs/status-*.md`.
 
-## Visão
+> **Princípio atual (jun/2026): validar antes de investir em backend.**
+> O EscalaSaúde está em modo **protótipo de validação**: roda em **web puro**
+> (`npm run dev`), com estado em memória. O foco é evoluir **regra de negócio e
+> frontend** para apresentar às gerentes das UBS. **Persistência, backend e
+> empacotamento só serão decididos se/quando a ideia for aprovada** — ver o
+> [Ponto de decisão](#ponto-de-decisão--persistência--backend) e o
+> [backlog 0001](./backlog/0001-persistencia-backend-electron.md).
 
-Sair de um MVP front-only com dados mockados em memória para um **aplicativo desktop
-instalável**, rodando **localmente** na máquina de cada gerente de UBS, com
-**persistência real** dos dados, cadastro próprio (profissionais, salas, planta),
-login, gestão completa de escala e relatórios.
+O projeto tem **duas trilhas**: a **Trilha A** (validação, em andamento/concluída) e
+a **Trilha B** (produto, pós-validação).
 
-## Decisões de arquitetura (definidas com o cliente)
+---
 
-- **Empacotamento:** aplicativo **desktop com Electron** (programa instalável, sem
-  terminal), tendo a UI React/Vite atual como *renderer*.
-- **Persistência:** **SQLite** local (arquivo `.db` na máquina), via
-  `better-sqlite3` no processo principal. Drizzle ORM (schema/migrations tipados)
-  é introduzido a partir da Fase 1, quando o schema cresce com multi-unidade.
-- **Multi-unidade:** o app guarda **as duas UBS** e a unidade fica **atrelada ao
-  login da gerente** (seletor de unidade), já preparado para escalar para mais
-  unidades no futuro.
-- **Planta por unidade:** cada UBS tem layout diferente; a geometria das salas
-  (x/y/w/h) passa a ser **dado por unidade**, não mais `coordMap` hardcoded.
-- **Acesso:** login local (só perfil `gerente` por ora; campo `role` já preparado).
-- **Escala:** turnos fixos (manhã/tarde) evoluem para **horários flexíveis**
-  (início/fim), com visões semanal e mensal e gestão de ausências.
-- **Plataforma:** desktop web (Windows) por enquanto.
+## Trilha A — MVP de validação (frontend, web puro) ✅
 
-## Arquitetura-alvo
+Telas e regras para validar a ideia com as gerentes. Tudo rodando com `npm run dev`,
+sem persistência. **Fases 1 a 7 concluídas** (detalhes em
+[`status-v2.md`](./status-v2.md)).
 
-- **Renderer:** app React 19 + Vite 8 + Zustand + dnd-kit + Tailwind v4 (atual).
-- **Main process (Electron):** janela, ciclo de vida, acesso ao SQLite.
-- **Preload:** ponte segura (`contextBridge`) expondo uma API tipada em
-  `window.api` (renderer nunca toca no banco direto; conversa por IPC).
-- **Camada de dados:** o `useEscalaStore` continua sendo a fachada (mesmas ações),
-  mas o estado é **hidratado do banco** na inicialização e **espelhado de volta**
-  ao SQLite a cada mudança. Em modo web puro (`npm run dev`), a persistência é
-  ignorada graciosamente e o app funciona como antes.
+| Fase | Entrega | Status |
+|------|---------|--------|
+| 1 | **Horário livre por profissional** (fim dos turnos fixos; slider de horário de referência; presença por sobreposição) e **capacidades** (`funcoes[]` + `setoresPermitidos[]`) com avisos de adequação | ✅ |
+| 2 | **Cadastros** (CRUD de profissionais e salas via modal "Gerenciar"); dados migrados para o store; coordenadas das salas em `Sala.pos` (fim do `coordMap` hardcoded) | ✅ |
+| 3 | **Visão semanal** (grade setor × 7 dias, cobertura, navegação; clicar abre o dia no mapa) | ✅ |
+| 4 | **Modo apresentação / impressão** (quadro limpo para projetar/imprimir; `window.print()` + CSS de impressão) | ✅ |
+| 5 | **Tema claro/escuro** (toggle persistido; superfícies em variáveis + inversão da escala slate) | ✅ |
+| 6 | **Dividir carga horária** (turno partido: profissional disponível manhã e tarde em salas diferentes; juntar de volta) | ✅ |
+| 7 | **Fixar e replicar escala** (modelos nomeados + replicação por intervalo, com pular fins de semana e sobrescrever/mesclar) | ✅ |
 
-## Modelo de dados (evolução das tabelas)
+### Transversal — Polimento (próximo / contínuo)
+Estados vazios, feedback de adequação de cargo **no próprio mapa** (não só no
+painel), onboarding, micro-interações, **undo granular**, acessibilidade e ajuste
+fino do tema claro.
 
-- `unidades` — id, nome, município, config da planta.
-- `usuarios` — id, nome, email, `senha_hash`, `role`, `unidade_id`.
-- `salas` — + `unidade_id` + geometria (x, y, w, h) + `cargos_obrigatorios`.
-- `funcionarios` — + `unidade_id` + `carga_horaria_semanal`.
-- `alocacoes` (escalas) — `data`, `horario_inicio`/`horario_fim`, `sala_id`,
-  `funcionario_id`.
-- `ausencias` — `funcionario_id`, tipo (`folga`/`ferias`/`falta`/`afastamento`),
-  `data_inicio`, `data_fim`, motivo.
-- `historico` — log de auditoria, agora persistido.
+---
 
-## Fases
+## Ponto de decisão — Persistência & Backend
 
-### Fase 0 — Fundação Electron + persistência ✅ (em execução)
-Estruturar Electron (main/preload), SQLite local, *seed* a partir dos mocks atuais
-e fazer o store hidratar do banco e espelhar mudanças. UI inalterada.
-- *Pronto quando:* o app abre como janela desktop e **os dados sobrevivem ao
-  fechar/reabrir**. Modo web continua funcionando.
+Hoje o estado vive **só em memória** (Zustand) e reseta no refresh — aceitável para
+o protótipo. **Após a validação**, escolher a camada de dados conforme o cenário
+real (1 UBS? várias? multiusuário? offline? desktop ou web?). Opções e trade-offs
+detalhados no **[backlog 0001](./backlog/0001-persistencia-backend-electron.md)**:
 
-### Fase 1 — Multi-unidade + login
-Tabelas `unidades` e `usuarios`, tela de login, sessão, dados escopados por
-unidade. Geometria da planta por unidade. Introdução do Drizzle ORM + migrations.
-Cadastro das 2 UBS.
-- *Pronto quando:* a gerente loga e vê **sua** unidade com **sua** planta.
+- **localStorage / IndexedDB** — zero backend, persiste no navegador. Ótimo para um
+  piloto enxuto.
+- **Electron + SQLite** — desktop instalável, dados locais. **Já existe uma fundação
+  pronta porém dormente** no código (`electron/`, `src/lib/persistence.ts`,
+  `better-sqlite3`), entregue na Fase 0 — ver [`status-v1.md`](./status-v1.md).
+- **Backend web + Postgres** (NestJS/Express) — multiunidade, auth real, hospedado.
+- **BaaS (Supabase / Firebase)** — banco + auth + realtime gerenciados.
 
-### Fase 2 — Cadastros (CRUD) na plataforma
-CRUD de funcionários, salas e dados da unidade. Editor simples de planta
-(reposicionar/redimensionar salas) para desenhar a 2ª UBS pela interface.
-- *Pronto quando:* dá para montar uma UBS do zero pela interface.
+> A direção original (jun/2026, no `status-v1.md`) assumia **Electron + SQLite como
+> decidido**. Nesta fase a decisão foi **reaberta**: validar primeiro, escolher a
+> persistência depois. A Trilha B abaixo descreve o **produto-alvo** independentemente
+> de qual camada de dados for escolhida.
 
-### Fase 3 — Motor de escala avançado
-Horários flexíveis (início/fim), visões semanal e mensal com navegação por data,
-e ausências (folga/férias/falta/afastamento) refletindo na disponibilidade.
-- *Pronto quando:* dá para montar a escala da semana e marcar férias/folgas.
+---
 
-### Fase 4 — Validações operacionais
-Carga horária (limite semanal por vínculo/contrato), função obrigatória por sala
-(bloqueio configurável), conflito de horário do mesmo profissional e cobertura
-mínima.
-- *Pronto quando:* o sistema bloqueia/alerta conforme as regras.
+## Trilha B — Produto (pós-validação)
 
-### Fase 5 — Dashboard + PDF/impressão
-Dashboard de indicadores (cobertura, horas, ausências, ocupação por sala) e modelo
-imprimível + exportação PDF (via `webContents.printToPDF` do Electron).
-- *Pronto quando:* dá para gerar PDF da escala e do dashboard.
+Metas de produto a partir da aprovação da ideia. Pré-requisito: decidir a
+persistência (acima). As etapas abaixo valem para qualquer camada escolhida.
 
-### Fase 6 — Empacotamento e distribuição
-`electron-builder` gera instalador (Windows) com ícone, sem terminal.
-Backup/restore do arquivo `.db`.
-- *Pronto quando:* existe um instalador que a gerente roda sem terminal.
+- **Multiunidade + login.** Guardar as 2 UBS; unidade atrelada ao login da gerente
+  (campo `role` já previsto). Dados escopados por unidade.
+- **Planta por unidade.** Geometria das salas (`Sala.pos`) já é dado editável; falta
+  um **editor visual de planta** (arrastar/redimensionar) e múltiplas plantas.
+- **Motor de escala avançado.** Visão **mensal**; **ausências** (folga/férias/falta/
+  afastamento) refletindo na disponibilidade; jornadas com início/fim por dia.
+- **Validações operacionais.** Carga horária semanal por vínculo/contrato; função
+  obrigatória por sala (bloqueio configurável, hoje é só aviso); conflito de horário;
+  cobertura mínima.
+- **Dashboard + PDF.** Indicadores (cobertura, horas, ausências, ocupação por sala) e
+  exportação em PDF (no desktop, via `webContents.printToPDF`).
+- **Empacotamento e distribuição** (se a via desktop for escolhida). `electron-builder`
+  gera instalador Windows sem terminal; backup/restore do `.db`.
+
+---
 
 ## Premissas
 
-- SO das gerentes: **Windows** (relevante na Fase 6).
-- Login local, senha com hash; sem servidor/nuvem; cada máquina é independente.
-- Mantemos React 19 + Zustand + dnd-kit + Tailwind; a UI é preservada — o que
-  evolui é a camada de dados e os novos módulos (login, cadastros, dashboard).
+- SO das gerentes: **Windows**.
+- A UI atual (React 19 + Vite 8 + Zustand + dnd-kit + Tailwind v4) é preservada; o
+  que evolui é a camada de dados e os novos módulos.
+- O `useEscalaStore` é a **fachada de dados**: as telas não mudam quando a
+  persistência entrar — o store passa a hidratar/espelhar a partir da camada escolhida
+  (padrão já provado na Fase 0 com o Electron).
